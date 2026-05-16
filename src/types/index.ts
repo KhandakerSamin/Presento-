@@ -1,28 +1,31 @@
 export type Department = {
   id: string;
-  code: string;       // "SWE", "CSE", "EEE"
+  code: string;
   name: string;
 };
 
 export type Course = {
   id: string;
   department_id: string;
-  course_code: string;  // "SE221"
+  course_code: string;
   course_name: string;
+  department?: Department;
 };
 
 export type Section = {
   id: string;
   course_id: string;
-  semester: string;         // "Summer-2026"
-  batch: number;            // 42
-  section: string;          // "A"
-  section_code: string;     // "SWE-SE221-42-A"
+  teacher_id: string;
+  semester: string;
+  batch: number;
+  section: string;
+  section_code: string;
   group_size: number;
+  is_locked: boolean;
   is_archived: boolean;
   archived_at: string | null;
   created_at: string;
-  course?: Course & { department?: Department };
+  course?: Course;
 };
 
 export type Group = {
@@ -31,6 +34,7 @@ export type Group = {
   group_number: number;
   topic: string | null;
   slide_link: string | null;
+  created_at: string;
   students?: Student[];
 };
 
@@ -39,6 +43,7 @@ export type Student = {
   group_id: string;
   name: string;
   student_id: string;
+  created_at: string;
 };
 
 export type Mark = {
