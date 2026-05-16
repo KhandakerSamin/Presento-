@@ -3,7 +3,7 @@ import SectionSearch from "./SectionSearch";
 
 export default function Hero() {
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center px-4 pt-24 pb-16 bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+    <section className="min-h-screen flex flex-col items-center justify-center px-4 pt-24 pb-16 bg-linear-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
       {/* Badge */}
       <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950 border border-blue-100 dark:border-blue-900 text-blue-700 dark:text-blue-300 text-xs font-medium">
         <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
