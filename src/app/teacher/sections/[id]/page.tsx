@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import SectionActions from "@/components/teacher/SectionActions";
+import ClientSectionControls from "./ClientSectionControls";
 
 export default async function SectionDetailPage({
   params,
@@ -30,6 +31,12 @@ export default async function SectionDetailPage({
     .select("*, students(*)")
     .eq("section_id", id)
     .order("group_number");
+
+  const groupIds = groups?.map(g => g.id) || [];
+  const { data: marks } = await supabase
+    .from("marks")
+    .select("*")
+    .in("group_id", groupIds.length > 0 ? groupIds : ['dummy']);
 
   const totalGroups = groups?.length ?? 0;
   const submittedGroups = groups?.filter((g) => g.slide_link).length ?? 0;
@@ -94,6 +101,7 @@ export default async function SectionDetailPage({
           >
             🎤 Start Presentation
           </Link>
+          <ClientSectionControls sectionId={id} groups={groups || []} marks={marks || []} />
           <a
             href={`/section/${section.section_code}`}
             target="_blank"

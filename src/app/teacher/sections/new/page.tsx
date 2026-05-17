@@ -24,6 +24,7 @@ export default function NewSectionPage() {
   const [batch, setBatch] = useState("");
   const [section, setSection] = useState("A");
   const [groupSize, setGroupSize] = useState("5");
+  const [totalStudents, setTotalStudents] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -98,6 +99,23 @@ export default function NewSectionPage() {
       setError(insertError.message);
       setLoading(false);
       return;
+    }
+
+    // Generate groups
+    if (totalStudents && Number(totalStudents) > 0) {
+      const numGroups = Math.ceil(Number(totalStudents) / Number(groupSize));
+      const groupsData = Array.from({ length: numGroups }).map((_, i) => ({
+        section_id: newSection.id,
+        group_number: i + 1,
+      }));
+
+      const { error: groupsError } = await supabase
+        .from("groups")
+        .insert(groupsData);
+
+      if (groupsError) {
+        console.error("Error creating groups:", groupsError);
+      }
     }
 
     router.push(`/teacher/sections/${newSection.id}`);
@@ -222,19 +240,35 @@ export default function NewSectionPage() {
           </div>
 
           {/* Group size */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-              Students per Group
-            </label>
-            <select
-              value={groupSize}
-              onChange={(e) => setGroupSize(e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {[2,3,4,5,6].map((n) => (
-                <option key={n} value={n}>{n} students per group</option>
-              ))}
-            </select>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                Students per Group
+              </label>
+              <select
+                value={groupSize}
+                onChange={(e) => setGroupSize(e.target.value)}
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {[2,3,4,5,6].map((n) => (
+                  <option key={n} value={n}>{n} students per group</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                Total Students
+              </label>
+              <input
+                type="number"
+                value={totalStudents}
+                onChange={(e) => setTotalStudents(e.target.value)}
+                placeholder="e.g. 40"
+                min={1}
+                required
+                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
           </div>
 
           {/* Preview code */}

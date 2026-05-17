@@ -5,20 +5,27 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
-export default function TeacherLoginPage() {
+export default function TeacherRegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
   const router = useRouter();
 
-  async function handleLogin(e: React.FormEvent) {
+  async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+            emailRedirectTo: `${window.location.origin}/teacher/dashboard`
+        }
+    });
 
     if (error) {
       setError(error.message);
@@ -26,8 +33,8 @@ export default function TeacherLoginPage() {
       return;
     }
 
-    router.push("/teacher/dashboard");
-    router.refresh();
+    setSuccess(true);
+    setLoading(false);
   }
 
   return (
@@ -44,16 +51,25 @@ export default function TeacherLoginPage() {
             </span>
           </Link>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-            Teacher Login
+            Teacher Register
           </h1>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-            Sign in to manage your sections
+            Create an account to manage your sections
           </p>
         </div>
 
         {/* Form */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
-          <form onSubmit={handleLogin} className="space-y-4">
+          {success ? (
+              <div className="text-center">
+                  <div className="mb-4 text-green-500 font-bold text-xl">Success!</div>
+                  <p className="text-sm text-slate-600 mb-6">Your account has been created. You can now log in.</p>
+                  <Link href="/teacher/login" className="w-full inline-block py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors text-sm">
+                      Go to Login
+                  </Link>
+              </div>
+          ) : (
+          <form onSubmit={handleRegister} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 Email
@@ -77,6 +93,7 @@ export default function TeacherLoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
+                minLength={6}
                 className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               />
             </div>
@@ -92,15 +109,16 @@ export default function TeacherLoginPage() {
               disabled={loading}
               className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors text-sm"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Registering..." : "Register"}
             </button>
           </form>
+          )}
         </div>
 
         <p className="text-center mt-6 text-xs text-slate-400">
-          Don't have an account yet?{" "}
-          <Link href="/teacher/register" className="text-blue-600 hover:underline transition-colors font-medium">
-            Register here
+          Already have an account?{" "}
+          <Link href="/teacher/login" className="text-blue-600 hover:underline transition-colors font-medium">
+            Log in here
           </Link>
         </p>
 

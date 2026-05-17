@@ -12,10 +12,7 @@ export default async function TeacherLayout({
   } = await supabase.auth.getUser();
 
   // If not logged in, middleware handles the redirect.
-  // This is a fallback check.
-  if (!user) {
-    redirect("/teacher/login");
-  }
+  // We'll remove the fallback check so it doesn't cause infinite redirect loops on login page.
 
   return <>{children}</>;
 }
