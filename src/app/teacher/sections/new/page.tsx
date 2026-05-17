@@ -168,9 +168,14 @@ export default function NewSectionPage() {
 
           {/* Course */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-              Course
-            </label>
+            <div className="flex justify-between items-center mb-1.5">
+               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                 Course
+               </label>
+               <Link href="/teacher/courses/new" className="text-xs text-blue-600 hover:underline">
+                 Can't find your course? Add it
+               </Link>
+            </div>
             <select
               value={courseId}
               onChange={(e) => {
