@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { Lock, Check, Presentation, ExternalLink, Users } from "lucide-react";
+import { Lock, Check, Presentation, ExternalLink } from "lucide-react";
 import SectionActions from "@/components/teacher/SectionActions";
 import WorkflowControls from "./WorkflowControls";
 import GroupList from "@/components/teacher/GroupList";
@@ -64,37 +64,50 @@ export default async function SectionDetailPage({
       </header>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        {/* Section info */}
+        {/* Section Header */}
         <div className="mb-8">
-          <div className="flex flex-wrap items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white font-mono">
-              {section.section_code}
-            </h1>
-            <span className={`text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1 ${
-              section.is_locked
-                ? "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400"
-                : "bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-400"
-            }`}>
-              {section.is_locked ? <><Lock className="w-3 h-3" /> Locked</> : <><Check className="w-3 h-3" /> Active</>}
-            </span>
-          </div>
-          <p className="text-slate-500 text-sm">
-            {section.course?.course_name} · {section.semester} · Batch {section.batch} · Section {section.section}
-          </p>
-        </div>
-
-        {/* Stats row */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          {[
-            { label: "Total Groups", value: totalGroups, color: "text-slate-900 dark:text-white" },
-            { label: "Submitted", value: submittedGroups, color: "text-green-600 dark:text-green-400" },
-            { label: "Pending", value: pendingGroups, color: "text-amber-600 dark:text-amber-400" },
-          ].map((s) => (
-            <div key={s.label} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 text-center">
-              <div className={`text-3xl font-bold mb-1 ${s.color}`}>{s.value}</div>
-              <div className="text-xs text-slate-500">{s.label}</div>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-6">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+                  {section.section_code}
+                </h1>
+              </div>
+              <p className="text-slate-600 dark:text-slate-400 text-sm">
+                {section.course?.course_name}
+              </p>
+              <p className="text-xs text-slate-500 mt-1.5">
+                {section.semester} · Batch {section.batch} · Section {section.section} · {section.group_size} per group
+              </p>
             </div>
-          ))}
+            <div className="flex items-center gap-2">
+              <span className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full font-medium border ${
+                section.is_locked
+                  ? "bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800"
+                  : "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800"
+              }`}>
+                {section.is_locked ? <Lock className="w-3 h-3" /> : <Check className="w-3 h-3" />}
+                {section.is_locked ? "Locked" : "Active"}
+              </span>
+            </div>
+          </div>
+
+          {/* Minimal Stats */}
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { label: "Total Groups", value: groups?.length ?? 0, icon: Users },
+              { label: "Submitted", value: groups?.filter((g) => g.slide_link).length ?? 0, color: "text-green-600 dark:text-green-400" },
+              { label: "Pending", value: groups?.filter((g) => !g.slide_link).length ?? 0, color: "text-amber-600 dark:text-amber-400" },
+            ].map((s) => (
+              <div key={s.label} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 text-center">
+                <div className="text-2xl font-bold text-slate-900 dark:text-white mb-0.5">{s.value}</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400">{s.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Quick actions & Workflow */}
@@ -123,14 +136,9 @@ export default async function SectionDetailPage({
 
         {/* All Groups Unified View */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 mb-8 shadow-sm">
-          <div className="flex items-center gap-2 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
-            <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
-              <Users className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Groups</h3>
-              <p className="text-sm text-slate-500">Manage all groups and their topics</p>
-            </div>
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Groups & Topics</h3>
+            <p className="text-sm text-slate-500 mt-1">Manage all group assignments and topics</p>
           </div>
           <GroupList groups={groups || []} section={section} />
         </div>

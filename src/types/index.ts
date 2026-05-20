@@ -36,6 +36,7 @@ export type Group = {
   id: string;
   section_id: string;
   group_number: number;
+  custom_name?: string | null;
   topic: string | null;
   topic_status?: 'pending' | 'approved' | 'rejected' | null;
   topic_proposal_reason?: string | null;

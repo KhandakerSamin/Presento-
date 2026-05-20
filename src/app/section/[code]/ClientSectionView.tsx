@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Group, Section } from "@/types";
-import { Loader2, Plus, AlertTriangle, CheckCircle2, Link as LinkIcon, Trash2, Info } from "lucide-react";
+import { Loader2, Plus, AlertTriangle, CheckCircle2, Link as LinkIcon, Trash2 } from "lucide-react";
+import StudentTopicSelector from "@/components/section/StudentTopicSelector";
+import ProposalSubmission from "@/components/section/ProposalSubmission";
 
 export default function ClientSectionView({
   section,
@@ -286,73 +288,16 @@ function GroupCard({
              )}
            </div>
 
-           {/* Right side: Presentation/Slide */}
+           {/* Right side: Topic & Presentation */}
            <div className="lg:col-span-5 border-t lg:border-t-0 lg:border-l border-slate-100 pt-6 lg:pt-0 lg:pl-8 flex flex-col gap-6">
               
-              {/* Topic Selection / Proposal form */}
-              {isFull && (!group.topic || group.topic_status === 'rejected') && (section.topic_assignment_mode === 'student_select' || section.topic_assignment_mode === 'proposal') && (
-                 <div className="bg-purple-50/50 p-5 rounded-2xl border border-purple-100">
-                    <h4 className="font-semibold text-purple-900 mb-3 flex items-center gap-2">
-                       {section.topic_assignment_mode === 'student_select' ? 'Select Topic' : 'Submit Topic Proposal'}
-                    </h4>
-                    {group.topic_status === 'rejected' && <p className="text-xs text-red-600 mb-2">Previous proposal was rejected. Submit a new one.</p>}
-                    <form onSubmit={async (e) => {
-                       e.preventDefault();
-                       const form = e.target as HTMLFormElement;
-                       const topicVal = (form.elements.namedItem('topicVal') as HTMLInputElement | HTMLSelectElement).value;
-                       const reasonVal = (form.elements.namedItem('topicReason') as HTMLTextAreaElement | null)?.value || '';
-                       
-                       if (!topicVal) return;
-                       
-                       const updates: any = { topic: topicVal };
-                       if (section.topic_assignment_mode === 'proposal') {
-                         updates.topic_status = 'pending';
-                         updates.topic_proposal_reason = reasonVal;
-                       } else {
-                         // auto approve for student_select
-                         updates.topic_status = 'approved';
-                       }
-                       
-                       setLoading("slide"); // reuse loading state
-                       await supabase.from("groups").update(updates).eq("id", group.id);
-                       await onRefresh();
-                       setLoading(null);
-                    }}>
-                       {section.topic_assignment_mode === 'student_select' ? (
-                          <div className="space-y-3">
-                             <div>
-                                <label className="text-xs font-semibold text-slate-600 mb-2 block">Select a Topic</label>
-                                <select name="topicVal" required className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 outline-none mb-3">
-                                   <option value="">-- Choose a topic --</option>
-                                   {(section.topics || []).map(t => {
-                                      // hide topics if already taken (unless multiple selection is allowed)
-                                      const taken = !section.allow_multiple_selection && allGroups.some(g => g.topic === t && g.id !== group.id);
-                                      return <option key={t} value={t} disabled={taken}>{t} {taken ? '(Taken)' : ''}</option>;
-                                   })}
-                                </select>
-                             </div>
-                             {section.allow_multiple_selection && (
-                                <p className="text-xs text-slate-600 bg-blue-50 p-2 rounded border border-blue-100 flex items-center gap-1"><Info className="w-3 h-3" /> Multiple groups can select the same topic</p>
-                             )}
-                          </div>
-                       ) : (
-                          <div className="space-y-3">
-                             <div>
-                                <label className="text-xs font-semibold text-slate-600 mb-2 block">Your Topic Proposal</label>
-                                <input name="topicVal" required placeholder="Enter your topic..." className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 outline-none mb-3" />
-                             </div>
-                             <div>
-                                <label className="text-xs font-semibold text-slate-600 mb-2 block">Why this topic? (Optional)</label>
-                                <textarea name="topicReason" placeholder="Explain your reasoning..." className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 outline-none" rows={3} />
-                             </div>
-                          </div>
-                       )}
-                       <button type="submit" disabled={loading === "slide"} className="w-full px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2">
-                          {loading === "slide" && <Loader2 className="w-4 h-4 animate-spin" />}
-                          {section.topic_assignment_mode === 'student_select' ? 'Confirm Selection' : 'Submit Proposal'}
-                       </button>
-                    </form>
-                 </div>
+              {/* Topic Selection / Proposal Component */}
+              {isFull && section.topic_assignment_mode === 'student_select' && (
+                <StudentTopicSelector section={section} group={group} />
+              )}
+
+              {isFull && section.topic_assignment_mode === 'proposal' && (
+                <ProposalSubmission section={section} group={group} />
               )}
 
               {/* Status banner if pending approval */}
@@ -388,7 +333,7 @@ function GroupCard({
                     {/* Warning message */}
                     <div className="mt-2 text-xs">
                        <div className="flex items-start gap-1.5 text-amber-600 font-medium mb-1.5 bg-amber-50 p-2 rounded-lg border border-amber-100">
-                          <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" /> 
+                          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" /> 
                           <p>Warning: Give public access before sharing, otherwise the teacher won't be able to open it.</p>
                        </div>
                        {slideStatus === "checking" && <p className="text-slate-500 flex items-center gap-1.5 mt-2"><Loader2 className="w-3.5 h-3.5 animate-spin" /> Verifying link access...</p>}
@@ -419,7 +364,7 @@ function GroupCard({
                       rel="noreferrer"
                       className="text-sm text-blue-600 hover:text-blue-700 hover:underline break-all font-medium flex items-center gap-1.5"
                     >
-                      <LinkIcon className="w-4 h-4 flex-shrink-0" />
+                      <LinkIcon className="w-4 h-4 shrink-0" />
                       View Slide
                     </a>
                  </div>
@@ -430,7 +375,7 @@ function GroupCard({
 
         {error && (
            <div className="mt-6 p-4 bg-red-50 text-red-700 text-sm rounded-xl border border-red-100 flex items-start gap-2.5">
-              <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+              <AlertTriangle className="w-5 h-5 shrink-0" />
               <p className="font-medium">{error}</p>
            </div>
         )}

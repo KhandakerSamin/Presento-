@@ -45,7 +45,7 @@ export default function NewCoursePage() {
     if (!user) { router.push("/teacher/login"); return; }
 
     // Retrieve or Insert a Department so we don't break foreign keys, or ideally create the course directly.
-    let { data: currDept } = await supabase.from("departments").select("id, code").limit(1).single();
+    const { data: currDept } = await supabase.from("departments").select("id, code").limit(1).single();
     let currDeptId = currDept?.id;
     let currDeptCode = currDept?.code || "GEN";
 
@@ -61,7 +61,7 @@ export default function NewCoursePage() {
     }
 
     // Get or Create Course
-    let { data: course } = await supabase
+    const { data: course } = await supabase
       .from("courses")
       .select("id")
       .eq("course_code", courseCode)
@@ -122,7 +122,7 @@ export default function NewCoursePage() {
 
       // Group generation for each newly inserted section
       if (totalStudents && Number(totalStudents) > 0 && newSections) {
-        let allGroups: any[] = [];
+        const allGroups: any[] = [];
         const numGroups = Math.ceil(Number(totalStudents) / Number(groupSize));
         
         newSections.forEach(newSec => {

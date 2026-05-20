@@ -1,10 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { UploadCloud, FileText } from "lucide-react";
+import { BookOpen, Plus } from "lucide-react";
 import TeacherLayout from "@/components/teacher/TeacherLayout";
-import { DashboardStats } from "@/components/teacher/DashboardStats";
 import SectionList from "@/components/teacher/SectionList";
+import AddCourseModal from "@/components/teacher/AddCourseModal";
 
 export const dynamic = "force-dynamic";
 
@@ -43,70 +43,51 @@ export default async function DashboardPage() {
 
   return (
     <TeacherLayout>
-      <div className="p-6 max-w-7xl mx-auto space-y-8">
+      <div className="p-6 md:p-8 max-w-6xl mx-auto">
         
-        {/* Presentation Statistics */}
-        <section>
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-              Presentations Overview
-            </h1>
-            <p className="text-sm text-slate-500 mt-1">
-              Track the performance and engagement of your uploaded materials.
-            </p>
-          </div>
-          <DashboardStats />
-        </section>
-
-        {/* Quick Actions */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link
-              href="/teacher/presentations/upload"
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 hover:shadow-md hover:border-blue-400 dark:hover:border-blue-600 transition-all duration-200"
-            >
-              <h3 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 p-2 rounded-md"><UploadCloud className="w-5 h-5" /></span>
-                Upload New Presentation
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
-                Add a new presentation to your library and share it with your students.
-              </p>
-            </Link>
-            <Link
-              href="/teacher/presentations"
-              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 hover:shadow-md hover:border-purple-400 dark:hover:border-purple-600 transition-all duration-200"
-            >
-              <h3 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-                <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-600 p-2 rounded-md"><FileText className="w-5 h-5" /></span>
-                Manage Presentations
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
-                View, edit, and keep track of all your currently uploaded presentations.
-              </p>
-            </Link>
-        </section>
-
-        <hr className="border-slate-200 dark:border-slate-800"/>
-
-        {/* Existing Sections Grid */}
-        <section>
-          <div className="flex items-center justify-between mb-6">
+        {/* Header */}
+        <div className="mb-10">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                My Sections
-              </h2>
-              <p className="text-sm text-slate-500 mt-1">
-                {sections?.length ?? 0} active section{sections?.length !== 1 ? "s" : ""}
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+                Dashboard
+              </h1>
+              <p className="text-slate-500 mt-1.5 text-sm">
+                Manage your courses and sections
               </p>
             </div>
-            <Link
-              href="/teacher/sections/new"
-              className="px-4 py-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 text-sm font-medium rounded-xl transition-colors"
-            >
-              + New Section
-            </Link>
+            <AddCourseModal />
           </div>
-          <SectionList sections={sections || []} pendingTopicCounts={pendingTopicCounts} />
+        </div>
+
+        {/* Sections Grid */}
+        <section>
+          {sections && sections.length > 0 ? (
+            <>
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-blue-600" />
+                  Your Sections
+                </h2>
+                <p className="text-sm text-slate-500 mt-1">
+                  {sections.length} active section{sections.length !== 1 ? "s" : ""}
+                </p>
+              </div>
+              <SectionList sections={sections} pendingTopicCounts={pendingTopicCounts} />
+            </>
+          ) : (
+            <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center">
+              <div className="text-slate-300 dark:text-slate-600 mb-4 bg-slate-100 dark:bg-slate-800 p-4 rounded-full">
+                <BookOpen className="w-8 h-8" />
+              </div>
+              <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                No sections yet
+              </h3>
+              <p className="text-sm text-slate-500 mb-6">
+                Create your first course to get started
+              </p>
+            </div>
+          )}
         </section>
 
       </div>
