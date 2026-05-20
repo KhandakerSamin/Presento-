@@ -117,6 +117,3 @@ export default function GroupList({ groups, section }: Props) {
     </div>
   );
 }
-    </div>
-  );
-}

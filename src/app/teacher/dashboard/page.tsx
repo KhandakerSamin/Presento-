@@ -4,7 +4,6 @@ import Link from "next/link";
 import { BookOpen, Plus } from "lucide-react";
 import TeacherLayout from "@/components/teacher/TeacherLayout";
 import SectionList from "@/components/teacher/SectionList";
-import AddCourseModal from "@/components/teacher/AddCourseModal";
 
 export const dynamic = "force-dynamic";
 
@@ -56,7 +55,13 @@ export default async function DashboardPage() {
                 Manage your courses and sections
               </p>
             </div>
-            <AddCourseModal />
+            <Link
+              href="/teacher/sections/new"
+              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors flex items-center gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              Add new course
+            </Link>
           </div>
         </div>
 
@@ -84,8 +89,14 @@ export default async function DashboardPage() {
                 No sections yet
               </h3>
               <p className="text-sm text-slate-500 mb-6">
-                Create your first course to get started
+                Take a course to generate your first section
               </p>
+              <Link
+                href="/teacher/sections/new"
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors"
+              >
+                Add new course
+              </Link>
             </div>
           )}
         </section>

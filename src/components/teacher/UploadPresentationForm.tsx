@@ -115,10 +115,6 @@ export function UploadPresentationForm() {
       if (!userId) throw new Error('Not authenticated');
 
       let thumbnailPath: string | undefined;
-      let filePath: string;
-      let fileSize: number;
-      let fileFormat: string;
-
       // Upload thumbnail
       if (thumbnail) {
         const thumbnailExt = thumbnail.type === 'image/png' ? 'png' : 'jpg';
@@ -144,9 +140,9 @@ export function UploadPresentationForm() {
 
       if (fileError) throw fileError;
 
-      filePath = fileName;
-      fileSize = presentation!.size;
-      fileFormat = fileExt || 'pptx';
+      const filePath = fileName;
+      const fileSize = presentation!.size;
+      const fileFormat = fileExt || 'pptx';
 
       // Create presentation record
       await createPresentation({

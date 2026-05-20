@@ -76,6 +76,7 @@ export function useTeacherSections(): UseTeacherSectionsReturn {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line
     fetchData();
   }, []);
 

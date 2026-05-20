@@ -288,6 +288,7 @@ function SerialRandomUI({ section, groups }: { section: Section; groups: Group[]
       const groupsToAssign = groups.filter((g) => !g.topic).slice(0, 10);
 
       for (const group of groupsToAssign) {
+        // eslint-disable-next-line
         const randomTopic = topics[Math.floor(Math.random() * topics.length)];
         await supabase
           .from("groups")

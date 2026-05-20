@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { Lock, Check, Presentation, ExternalLink } from "lucide-react";
+import { Lock, Check, Presentation, ExternalLink, Users } from "lucide-react";
 import SectionActions from "@/components/teacher/SectionActions";
 import WorkflowControls from "./WorkflowControls";
 import GroupList from "@/components/teacher/GroupList";

@@ -1,0 +1,114 @@
+
+D:\Desktop\presento\src\app\section\[code]\ClientSectionView.tsx
+  157:14   warning  'e' is defined but never used                                    @typescript-eslint/no-unused-vars
+  306:62   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  306:76   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  337:99   error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  340:160  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  340:195  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+D:\Desktop\presento\src\app\teacher\dashboard\page.tsx
+  3:8   warning  'Link' is defined but never used  @typescript-eslint/no-unused-vars
+  4:20  warning  'Plus' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Desktop\presento\src\app\teacher\layout.tsx
+   2:10  warning  'redirect' is defined but never used       @typescript-eslint/no-unused-vars
+  11:13  warning  'user' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\Desktop\presento\src\app\teacher\login\page.tsx
+  101:14  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+D:\Desktop\presento\src\app\teacher\presentations\[id]\edit\page.tsx
+  14:42  warning  'params' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Desktop\presento\src\app\teacher\register\page.tsx
+  14:9  warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\Desktop\presento\src\app\teacher\sections\[id]\ClientSectionControls.tsx
+   20:17  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   20:59  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  134:27  warning  'index' is assigned a value but never used                       @typescript-eslint/no-unused-vars
+  172:21  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  172:76  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  183:21  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  183:76  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  192:21  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  192:84  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  202:22  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  202:79  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  467:11  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  494:14  warning  'e' is defined but never used                                    @typescript-eslint/no-unused-vars
+  616:11  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  634:14  warning  'e' is defined but never used                                    @typescript-eslint/no-unused-vars
+  691:32  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+D:\Desktop\presento\src\app\teacher\sections\[id]\WorkflowControls.tsx
+    3:10  warning  'useMemo' is defined but never used                  @typescript-eslint/no-unused-vars
+    4:17  warning  'Mark' is defined but never used                     @typescript-eslint/no-unused-vars
+   13:3   warning  'Settings' is defined but never used                 @typescript-eslint/no-unused-vars
+   45:9   warning  'approvedGroups' is assigned a value but never used  @typescript-eslint/no-unused-vars
+   65:17  error    Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  425:65  error    Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+
+D:\Desktop\presento\src\app\teacher\sections\[id]\page.tsx
+  40:17  warning  'marks' is assigned a value but never used          @typescript-eslint/no-unused-vars
+  47:9   warning  'pendingGroups' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\Desktop\presento\src\app\teacher\sections\[id]\present\PresentationClient.tsx
+  8:3  warning  'section' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Desktop\presento\src\app\teacher\sections\new\page.tsx
+  125:26  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  144:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  314:72  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  325:72  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  336:72  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  347:72  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Desktop\presento\src\components\section\ProposalSubmission.tsx
+  10:3   warning  'section' is defined but never used       @typescript-eslint/no-unused-vars
+  47:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Desktop\presento\src\components\section\StudentTopicSelector.tsx
+   7:24  warning  'AlertCircle' is defined but never used   @typescript-eslint/no-unused-vars
+  50:21  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Desktop\presento\src\components\teacher\AddCourseModal.tsx
+  91:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Desktop\presento\src\components\teacher\AssignedTopicSection.tsx
+   55:6   warning  React Hook useEffect has missing dependencies: 'loading', 'router', 'section.id', and 'supabase'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  206:44  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                       react/no-unescaped-entities
+  206:54  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                       react/no-unescaped-entities
+  301:14  warning  'e' is defined but never used                                                                                                                         @typescript-eslint/no-unused-vars
+  364:40  warning  'groups' is defined but never used                                                                                                                    @typescript-eslint/no-unused-vars
+  495:29  warning  'section' is defined but never used                                                                                                                   @typescript-eslint/no-unused-vars
+
+D:\Desktop\presento\src\components\teacher\EditPresentationForm.tsx
+    3:31  warning  'useEffect' is defined but never used                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   28:28  warning  'setPresentationFile' is assigned a value but never used                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   34:9   warning  'presentationRef' is assigned a value but never used                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  319:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\Desktop\presento\src\components\teacher\GroupList.tsx
+  5:10  warning  'Edit2' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Desktop\presento\src\components\teacher\GroupTopicButton.tsx
+  43:14  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Desktop\presento\src\components\teacher\PresentationsGrid.tsx
+  75:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\Desktop\presento\src\components\teacher\TeacherLayout.tsx
+  7:10  warning  'Menu' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Desktop\presento\src\components\teacher\UploadPresentationForm.tsx
+  147:7  error  'filePath' is never reassigned. Use 'const' instead    prefer-const
+  148:7  error  'fileSize' is never reassigned. Use 'const' instead    prefer-const
+  149:7  error  'fileFormat' is never reassigned. Use 'const' instead  prefer-const
+
+D:\Desktop\presento\src\lib\seed-presentations.ts
+  150:15  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+Γ£û 67 problems (35 errors, 32 warnings)
+
