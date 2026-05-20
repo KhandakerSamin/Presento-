@@ -17,7 +17,7 @@ export default function ClientSectionControls({
   const [loading, setLoading] = useState<string | null>(null);
   const [showModal, setShowModal] = useState<"assign" | "manual" | "proposals" | null>(null);
   const [assignmentType, setAssignmentType] = useState<"manual" | "random" | "student_select" | "proposal">(
-    (section.topic_assignment_type as any) || "manual"
+    (section as any).topic_assignment_mode || (section as any).topic_assignment_type || "manual"
   );
   const [topicsInput, setTopicsInput] = useState("");
   const [topics, setTopics] = useState<string[]>(section.topics || []);
@@ -169,7 +169,7 @@ export default function ClientSectionControls({
       </button>
 
       {/* Mode-specific action buttons */}
-      {section.topic_assignment_type === "random" && (
+      {((section as any).topic_assignment_mode === "random" || (section as any).topic_assignment_type === "random") && (
         <button
           onClick={handleRandomAssign}
           disabled={loading === "topics" || topics.length === 0}
@@ -180,7 +180,7 @@ export default function ClientSectionControls({
         </button>
       )}
 
-      {section.topic_assignment_type === "manual" && (
+      {((section as any).topic_assignment_mode === "manual" || (section as any).topic_assignment_type === "manual") && (
         <button
           onClick={() => setShowModal("manual")}
           className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-xl transition-colors"
@@ -189,7 +189,7 @@ export default function ClientSectionControls({
         </button>
       )}
 
-      {section.topic_assignment_type === "student_select" && (
+      {((section as any).topic_assignment_mode === "student_select" || (section as any).topic_assignment_type === "student_select") && (
         <button
           disabled={topics.length === 0}
           className="px-4 py-2 bg-purple-600 opacity-50 cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors"
@@ -199,7 +199,7 @@ export default function ClientSectionControls({
         </button>
       )}
 
-      {(section.topic_assignment_type === "proposal" || hasPendingProposals) && (
+      {(((section as any).topic_assignment_mode === "proposal" || (section as any).topic_assignment_type === "proposal") || hasPendingProposals) && (
         <button
           onClick={() => setShowModal("proposals")}
           className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-xl transition-colors"

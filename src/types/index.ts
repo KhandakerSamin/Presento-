@@ -38,6 +38,7 @@ export type Group = {
   group_number: number;
   topic: string | null;
   topic_status?: 'pending' | 'approved' | 'rejected' | null;
+  topic_proposal_reason?: string | null;
   slide_link: string | null;
   created_at: string;
   students?: Student[];
@@ -60,3 +61,24 @@ export type Mark = {
 };
 
 export type GroupStatus = "open" | "full" | "submitted";
+
+export type Presentation = {
+  id: string;
+  teacher_id: string;
+  title: string;
+  description?: string | null;
+  course_code?: string | null;
+  course_name?: string | null;
+  department?: string | null;
+  semester?: string | null;
+  tags?: string[];
+  file_path: string;
+  file_size: number;
+  file_format: string; // 'pdf', 'pptx', 'ppt'
+  thumbnail_path?: string | null;
+  views: number;
+  downloads: number;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+};

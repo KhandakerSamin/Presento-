@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { Lock, Check, Presentation, ExternalLink, Users } from "lucide-react";
 import SectionActions from "@/components/teacher/SectionActions";
-import ClientSectionControls from "./ClientSectionControls";
-import AssignedTopicSection from "@/components/teacher/AssignedTopicSection";
+import WorkflowControls from "./WorkflowControls";
 import GroupList from "@/components/teacher/GroupList";
 
 export const dynamic = "force-dynamic";
@@ -70,12 +70,12 @@ export default async function SectionDetailPage({
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white font-mono">
               {section.section_code}
             </h1>
-            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+            <span className={`text-xs px-2.5 py-1 rounded-full font-medium flex items-center gap-1 ${
               section.is_locked
                 ? "bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400"
                 : "bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-400"
             }`}>
-              {section.is_locked ? "🔒 Locked" : "✓ Active"}
+              {section.is_locked ? <><Lock className="w-3 h-3" /> Locked</> : <><Check className="w-3 h-3" /> Active</>}
             </span>
           </div>
           <p className="text-slate-500 text-sm">
@@ -97,99 +97,42 @@ export default async function SectionDetailPage({
           ))}
         </div>
 
-        {/* Quick actions */}
-        <div className="flex flex-wrap gap-3 mb-8">
+        {/* Quick actions & Workflow */}
+        <div className="flex flex-wrap items-center gap-3 mb-8 bg-white dark:bg-slate-900 md:px-5 md:py-4 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <WorkflowControls section={section} groups={groups || []} />
+          
+          <div className="w-px h-8 bg-slate-200 dark:bg-slate-800 mx-2 hidden sm:block"></div>
+
           <Link
             href={`/teacher/sections/${id}/present`}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900 border border-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-sm font-medium rounded-xl transition-all shadow-sm"
           >
-            🎤 Start Presentation
+            <Presentation className="w-4 h-4" />
+            Presentation Panel
           </Link>
-          <ClientSectionControls section={section} groups={groups || []} marks={marks || []} />
+          
           <a
             href={`/section/${section.section_code}`}
             target="_blank"
-            className="px-4 py-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-300 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
           >
-            👁 Student View ↗
+            <ExternalLink className="w-4 h-4" />
+            Student View
           </a>
         </div>
 
-        {/* Assigned Topic Section */}
-        <AssignedTopicSection section={section} groups={groups || []} />
-
-        {/* Groups List */}
-        {section.topic_assignment_enabled && section.topic_assignment_mode === "manual" && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 mb-8">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">📋 Groups</h3>
-            <GroupList groups={groups || []} section={section} />
-          </div>
-        )}
-
-        {/* Original Groups table */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="font-semibold text-slate-900 dark:text-white">All Groups</h2>
-          </div>
-          {groups && groups.length > 0 ? (
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
-              {groups.map((group) => (
-                <div key={group.id} className="px-5 py-4 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <span className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm font-bold text-slate-700 dark:text-slate-300">
-                      {group.group_number}
-                    </span>
-                    <div>
-                      <p className="text-sm font-medium text-slate-900 dark:text-white flex items-center gap-2">
-                        {group.topic ? (
-                            <>
-                              {group.topic}
-                              {group.topic_status === 'pending' && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">Pending</span>}
-                              {group.topic_status === 'rejected' && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-100 text-red-700">Rejected</span>}
-                              {group.topic_status === 'approved' && section.topic_assignment_mode === 'proposal' && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">Approved</span>}
-                            </>
-                        ) : (
-                            <span className="text-slate-400 italic">No topic assigned</span>
-                        )}
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {group.students?.length ?? 0}/{section.group_size} students
-                        {group.students?.map((s: { name: string }) => s.name).join(", ")
-                          ? ` · ${group.students?.map((s: { name: string }) => s.name).join(", ")}`
-                          : ""}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    {group.slide_link ? (
-                      <a
-                        href={group.slide_link}
-                        target="_blank"
-                        className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                      >
-                        View Slides ↗
-                      </a>
-                    ) : (
-                      <span className="text-xs text-slate-400">No slides</span>
-                    )}
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                      group.slide_link
-                        ? "bg-green-50 dark:bg-green-950 text-green-600 dark:text-green-400"
-                        : (group.students?.length ?? 0) >= section.group_size
-                        ? "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400"
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-500"
-                    }`}>
-                      {group.slide_link ? "Submitted" : (group.students?.length ?? 0) >= section.group_size ? "Full" : "Open"}
-                    </span>
-                  </div>
-                </div>
-              ))}
+        {/* All Groups Unified View */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 mb-8 shadow-sm">
+          <div className="flex items-center gap-2 mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
+            <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
+              <Users className="w-5 h-5" />
             </div>
-          ) : (
-            <div className="py-12 text-center text-slate-400 text-sm">
-              No groups yet. Students will appear here when they join.
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Groups</h3>
+              <p className="text-sm text-slate-500">Manage all groups and their topics</p>
             </div>
-          )}
+          </div>
+          <GroupList groups={groups || []} section={section} />
         </div>
       </main>
     </div>

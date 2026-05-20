@@ -1,24 +1,26 @@
+import { Users, Mic, CheckCircle, Paperclip } from "lucide-react";
+
 const features = [
   {
-    icon: "👥",
+    icon: <Users className="w-6 h-6 text-blue-600" />,
     title: "Group Management",
     description:
       "Students join groups with a single tap. No forms, no login required. Group slots fill up automatically.",
   },
   {
-    icon: "🎤",
+    icon: <Mic className="w-6 h-6 text-blue-600" />,
     title: "Live Presentation Mode",
     description:
       "Teachers navigate through groups one by one. Current group is highlighted. Slide links open instantly.",
   },
   {
-    icon: "✅",
+    icon: <CheckCircle className="w-6 h-6 text-blue-600" />,
     title: "Instant Marking",
     description:
       "Mark each group live during the presentation. Scores are saved to the database in real time.",
   },
   {
-    icon: "📎",
+    icon: <Paperclip className="w-6 h-6 text-blue-600" />,
     title: "Slide Submission",
     description:
       "Groups submit a Google Slides or Drive link. Submissions lock automatically when the teacher closes the section.",
@@ -53,7 +55,7 @@ export default function Features() {
               key={f.title}
               className="group p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20 transition-all duration-200"
             >
-              <div className="text-3xl mb-4">{f.icon}</div>
+              <div className="mb-4">{f.icon}</div>
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
                 {f.title}
               </h3>

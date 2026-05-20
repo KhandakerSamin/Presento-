@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Group } from "@/types";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { Plus, X, Check } from "lucide-react";
 
 interface Props {
   group: Group;
@@ -50,13 +51,23 @@ export default function GroupTopicButton({ group, isTeacher = true }: Props) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+        className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 ${
           group.topic
             ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50"
             : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50"
         }`}
       >
-        {group.topic ? `✓ ${group.topic}` : "+ Add Topic"}
+        {group.topic ? (
+          <>
+            <Check className="w-3 h-3" />
+            <span className="truncate">{group.topic}</span>
+          </>
+        ) : (
+          <>
+            <Plus className="w-3 h-3" />
+            <span>Add Topic</span>
+          </>
+        )}
       </button>
 
       {isOpen && (
@@ -68,9 +79,9 @@ export default function GroupTopicButton({ group, isTeacher = true }: Props) {
               </h3>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-slate-500 hover:text-slate-900 dark:hover:text-white text-2xl"
+                className="text-slate-500 hover:text-slate-900 dark:hover:text-white"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 

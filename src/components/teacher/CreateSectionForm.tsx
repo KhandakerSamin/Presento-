@@ -63,17 +63,17 @@ export default function CreateSectionForm() {
 
         {(assignmentType === "random" || assignmentType === "student_select") && (
           <div className="mt-4 pt-4 border-t">
-            <label className=\"block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1\">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               Available Topics (One per line)
             </label>
             <textarea
-              className=\"w-full p-2 border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400\"
+              className="w-full p-2 border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400"
               rows={5}
-              placeholder=\"e.g.&#10;Machine Learning Basics&#10;React Hooks Deep Dive&#10;Database Optimization\"
+              placeholder="e.g.&#10;Machine Learning Basics&#10;React Hooks Deep Dive&#10;Database Optimization"
               value={topics}
               onChange={(e) => setTopics(e.target.value)}
             />
-            <p className=\"text-xs text-slate-500 dark:text-slate-400 mt-1\">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Add multiple topics separated by new lines.
             </p>
           </div>

@@ -1,7 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import LogoutButton from "@/components/teacher/LogoutButton";
+import { UploadCloud, FileText } from "lucide-react";
+import TeacherLayout from "@/components/teacher/TeacherLayout";
+import { DashboardStats } from "@/components/teacher/DashboardStats";
 import SectionList from "@/components/teacher/SectionList";
 
 export const dynamic = "force-dynamic";
@@ -40,50 +42,74 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      {/* Top bar */}
-      <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center text-white text-xs font-bold">
-            P
-          </div>
-          <span className="font-semibold text-slate-900 dark:text-white">
-            Presento
-          </span>
-          <span className="text-slate-300 dark:text-slate-700">/</span>
-          <span className="text-sm text-slate-500">Dashboard</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-slate-500 hidden sm:block">
-            {user.email}
-          </span>
-          <LogoutButton />
-        </div>
-      </header>
-
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        {/* Header row */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
+    <TeacherLayout>
+      <div className="p-6 max-w-7xl mx-auto space-y-8">
+        
+        {/* Presentation Statistics */}
+        <section>
+          <div className="mb-6">
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-              My Sections
+              Presentations Overview
             </h1>
             <p className="text-sm text-slate-500 mt-1">
-              {sections?.length ?? 0} active section
-              {sections?.length !== 1 ? "s" : ""}
+              Track the performance and engagement of your uploaded materials.
             </p>
           </div>
-          <Link
-            href="/teacher/sections/new"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors"
-          >
-            + Take New Course
-          </Link>
-        </div>
+          <DashboardStats />
+        </section>
 
-        {/* Sections grid */}
-        <SectionList sections={sections || []} pendingTopicCounts={pendingTopicCounts} />
-      </main>
-    </div>
+        {/* Quick Actions */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link
+              href="/teacher/presentations/upload"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 hover:shadow-md hover:border-blue-400 dark:hover:border-blue-600 transition-all duration-200"
+            >
+              <h3 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 p-2 rounded-md"><UploadCloud className="w-5 h-5" /></span>
+                Upload New Presentation
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
+                Add a new presentation to your library and share it with your students.
+              </p>
+            </Link>
+            <Link
+              href="/teacher/presentations"
+              className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 hover:shadow-md hover:border-purple-400 dark:hover:border-purple-600 transition-all duration-200"
+            >
+              <h3 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-600 p-2 rounded-md"><FileText className="w-5 h-5" /></span>
+                Manage Presentations
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-3">
+                View, edit, and keep track of all your currently uploaded presentations.
+              </p>
+            </Link>
+        </section>
+
+        <hr className="border-slate-200 dark:border-slate-800"/>
+
+        {/* Existing Sections Grid */}
+        <section>
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                My Sections
+              </h2>
+              <p className="text-sm text-slate-500 mt-1">
+                {sections?.length ?? 0} active section{sections?.length !== 1 ? "s" : ""}
+              </p>
+            </div>
+            <Link
+              href="/teacher/sections/new"
+              className="px-4 py-2 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-900 text-sm font-medium rounded-xl transition-colors"
+            >
+              + New Section
+            </Link>
+          </div>
+          <SectionList sections={sections || []} pendingTopicCounts={pendingTopicCounts} />
+        </section>
+
+      </div>
+    </TeacherLayout>
   );
 }

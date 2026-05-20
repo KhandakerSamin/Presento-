@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { type Section } from "@/types";
 import { useState } from "react";
-import { Check, Share2 } from "lucide-react";
+import { Check, Share2, ClipboardList } from "lucide-react";
 
 export default function SectionList({
   sections,
@@ -25,8 +25,10 @@ export default function SectionList({
 
   if (!sections || sections.length === 0) {
     return (
-      <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
-        <div className="text-4xl mb-4">📋</div>
+      <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center">
+        <div className="text-slate-400 mb-4 bg-slate-100 dark:bg-slate-800 p-4 rounded-full">
+          <ClipboardList className="w-8 h-8" />
+        </div>
         <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
           No sections yet
         </h3>

@@ -46,7 +46,7 @@ export default function Footer() {
             <h4 className="text-sm font-semibold text-white mb-3">About</h4>
             <ul className="space-y-2 text-sm">
               <li>Department: Software Engineering</li>
-              <li>University: AIUB</li>
+              <li>University: DIU (Daffodil International University)</li>
               <li>Version: V1.0</li>
             </ul>
           </div>

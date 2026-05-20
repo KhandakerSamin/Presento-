@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { Lock, Unlock, Archive } from "lucide-react";
 
 interface Props {
   sectionId: string;
@@ -40,16 +41,16 @@ export default function SectionActions({ sectionId, isLocked }: Props) {
       <button
         onClick={toggleLock}
         disabled={loading}
-        className="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 transition-colors disabled:opacity-50"
+        className="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded-lg text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 transition-colors disabled:opacity-50 flex items-center gap-2"
       >
-        {isLocked ? "🔓 Unlock" : "🔒 Lock"}
+        {isLocked ? <><Unlock className="w-4 h-4" /> Unlock</> : <><Lock className="w-4 h-4" /> Lock</>}
       </button>
       <button
         onClick={archiveSection}
         disabled={loading}
-        className="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded-lg text-slate-500 hover:text-red-500 hover:border-red-200 dark:hover:border-red-900 transition-colors disabled:opacity-50"
+        className="px-3 py-1.5 text-sm border border-slate-200 dark:border-slate-700 rounded-lg text-slate-500 hover:text-red-500 hover:border-red-200 dark:hover:border-red-900 transition-colors disabled:opacity-50 flex items-center gap-2"
       >
-        Archive
+        <Archive className="w-4 h-4" /> Archive
       </button>
     </div>
   );
