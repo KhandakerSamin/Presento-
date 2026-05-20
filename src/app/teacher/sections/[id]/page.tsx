@@ -3,6 +3,10 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import SectionActions from "@/components/teacher/SectionActions";
 import ClientSectionControls from "./ClientSectionControls";
+import AssignedTopicSection from "@/components/teacher/AssignedTopicSection";
+import GroupList from "@/components/teacher/GroupList";
+
+export const dynamic = "force-dynamic";
 
 export default async function SectionDetailPage({
   params,
@@ -101,7 +105,7 @@ export default async function SectionDetailPage({
           >
             🎤 Start Presentation
           </Link>
-          <ClientSectionControls sectionId={id} groups={groups || []} marks={marks || []} />
+          <ClientSectionControls section={section} groups={groups || []} marks={marks || []} />
           <a
             href={`/section/${section.section_code}`}
             target="_blank"
@@ -111,10 +115,21 @@ export default async function SectionDetailPage({
           </a>
         </div>
 
-        {/* Groups table */}
+        {/* Assigned Topic Section */}
+        <AssignedTopicSection section={section} groups={groups || []} />
+
+        {/* Groups List */}
+        {section.topic_assignment_enabled && section.topic_assignment_mode === "manual" && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 mb-8">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4">📋 Groups</h3>
+            <GroupList groups={groups || []} section={section} />
+          </div>
+        )}
+
+        {/* Original Groups table */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="font-semibold text-slate-900 dark:text-white">Groups</h2>
+            <h2 className="font-semibold text-slate-900 dark:text-white">All Groups</h2>
           </div>
           {groups && groups.length > 0 ? (
             <div className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -125,8 +140,17 @@ export default async function SectionDetailPage({
                       {group.group_number}
                     </span>
                     <div>
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">
-                        {group.topic || <span className="text-slate-400 italic">No topic assigned</span>}
+                      <p className="text-sm font-medium text-slate-900 dark:text-white flex items-center gap-2">
+                        {group.topic ? (
+                            <>
+                              {group.topic}
+                              {group.topic_status === 'pending' && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">Pending</span>}
+                              {group.topic_status === 'rejected' && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-100 text-red-700">Rejected</span>}
+                              {group.topic_status === 'approved' && section.topic_assignment_mode === 'proposal' && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-100 text-green-700">Approved</span>}
+                            </>
+                        ) : (
+                            <span className="text-slate-400 italic">No topic assigned</span>
+                        )}
                       </p>
                       <p className="text-xs text-slate-500">
                         {group.students?.length ?? 0}/{section.group_size} students

@@ -139,23 +139,23 @@ export default function PresentationClient({
                   {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
                   
                   <div className="space-y-4">
-                     <div className="flex justify-between items-center bg-slate-50 p-3 rounded">
-                         <span className="font-medium">Content / 10</span>
-                         <input type="number" min="0" max="10" className="border rounded p-1 w-20 text-center" 
+                     <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-3 rounded">
+                         <span className="font-medium text-slate-900 dark:text-white">Content / 10</span>
+                         <input type="number" min="0" max="10" className="border border-slate-200 dark:border-slate-700 rounded p-1 w-20 text-center bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" 
                            value={criteriaScores.content} 
                            onChange={e => setCriteriaScores({...criteriaScores, content: Number(e.target.value)})} 
                          />
                      </div>
-                     <div className="flex justify-between items-center bg-slate-50 p-3 rounded">
-                         <span className="font-medium">Delivery / 10</span>
-                         <input type="number" min="0" max="10" className="border rounded p-1 w-20 text-center" 
+                     <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-3 rounded">
+                         <span className="font-medium text-slate-900 dark:text-white">Delivery / 10</span>
+                         <input type="number" min="0" max="10" className="border border-slate-200 dark:border-slate-700 rounded p-1 w-20 text-center bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" 
                            value={criteriaScores.delivery} 
                            onChange={e => setCriteriaScores({...criteriaScores, delivery: Number(e.target.value)})} 
                          />
                      </div>
-                     <div className="flex justify-between items-center bg-slate-50 p-3 rounded">
-                         <span className="font-medium">Q&A / 10</span>
-                         <input type="number" min="0" max="10" className="border rounded p-1 w-20 text-center" 
+                     <div className="flex justify-between items-center bg-slate-50 dark:bg-slate-900 p-3 rounded">
+                         <span className="font-medium text-slate-900 dark:text-white">Q&A / 10</span>
+                         <input type="number" min="0" max="10" className="border border-slate-200 dark:border-slate-700 rounded p-1 w-20 text-center bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500" 
                            value={criteriaScores.qa} 
                            onChange={e => setCriteriaScores({...criteriaScores, qa: Number(e.target.value)})} 
                          />

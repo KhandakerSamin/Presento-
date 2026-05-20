@@ -25,6 +25,10 @@ export type Section = {
   is_archived: boolean;
   archived_at: string | null;
   created_at: string;
+  topic_assignment_enabled?: boolean;
+  topic_assignment_mode?: 'manual' | 'serial_random' | 'student_select' | 'proposal';
+  topics?: string[] | null;
+  allow_multiple_selection?: boolean;
   course?: Course;
 };
 
@@ -33,6 +37,7 @@ export type Group = {
   section_id: string;
   group_number: number;
   topic: string | null;
+  topic_status?: 'pending' | 'approved' | 'rejected' | null;
   slide_link: string | null;
   created_at: string;
   students?: Student[];
