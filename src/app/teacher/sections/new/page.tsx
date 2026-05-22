@@ -6,7 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import { generateSectionCode } from "@/lib/utils";
 import Link from "next/link";
 
-const ALL_SECTIONS = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N"];
+// Reduced default list to 10 sections (A-J), but users can add more
+const DEFAULT_SECTIONS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
 export default function NewCoursePage() {
   const router = useRouter();
@@ -17,7 +18,10 @@ export default function NewCoursePage() {
   const [courseTitle, setCourseTitle] = useState("");
   const [courseCode, setCourseCode] = useState("");
   const [courseType, setCourseType] = useState<"Theory" | "Lab">("Theory");
+  
   const [selectedSections, setSelectedSections] = useState<string[]>([]);
+  const [customSection, setCustomSection] = useState(""); // State for manual section input
+  
   const [groupSize, setGroupSize] = useState("5");
   const [totalStudents, setTotalStudents] = useState("50");
   const [loading, setLoading] = useState(false);
@@ -32,6 +36,15 @@ export default function NewCoursePage() {
     setSelectedSections(prev =>
       prev.includes(sec) ? prev.filter(s => s !== sec) : [...prev, sec]
     );
+  }
+
+  // Handle adding a custom section via text input
+  function handleAddCustomSection() {
+    const val = customSection.trim().toUpperCase();
+    if (val && !selectedSections.includes(val)) {
+      setSelectedSections(prev => [...prev, val]);
+    }
+    setCustomSection("");
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -149,8 +162,10 @@ export default function NewCoursePage() {
 
   const inputCls =
     "w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors";
-
   const labelCls = "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5";
+
+  // Combine default sections with any custom sections the user has added
+  const displayedSections = Array.from(new Set([...DEFAULT_SECTIONS, ...selectedSections]));
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
@@ -174,16 +189,11 @@ export default function NewCoursePage() {
         <p className="text-sm text-slate-500 mb-8">Fill in the details to generate sections.</p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-
           {/* Semester + Batch */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={labelCls}>Semester</label>
-              <select
-                value={semester}
-                onChange={e => setSemester(e.target.value)}
-                className={inputCls}
-              >
+              <select value={semester} onChange={e => setSemester(e.target.value)} className={inputCls}>
                 <option>Summer-2025</option>
                 <option>Fall-2025</option>
                 <option>Spring-2026</option>
@@ -250,7 +260,7 @@ export default function NewCoursePage() {
             </div>
           </div>
 
-          {/* Sections — custom toggle grid, no react-select */}
+          {/* Sections — Dynamic toggle grid + Custom Type Input */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -269,14 +279,14 @@ export default function NewCoursePage() {
 
             <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
               <div className="flex flex-wrap gap-2">
-                {ALL_SECTIONS.map(sec => {
+                {displayedSections.map(sec => {
                   const active = selectedSections.includes(sec);
                   return (
                     <button
                       key={sec}
                       type="button"
                       onClick={() => toggleSection(sec)}
-                      className={`w-9 h-9 rounded-lg text-sm font-semibold border transition-all ${
+                      className={`min-w-9 px-2 h-9 rounded-lg text-sm font-semibold border transition-all ${
                         active
                           ? "bg-blue-600 border-blue-600 text-white shadow-sm"
                           : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400"
@@ -288,8 +298,34 @@ export default function NewCoursePage() {
                 })}
               </div>
 
+              {/* Custom Section Input */}
+              <div className="mt-3 flex items-center gap-2">
+                <input
+                  type="text"
+                  value={customSection}
+                  onChange={e => setCustomSection(e.target.value.toUpperCase())}
+                  onKeyDown={e => {
+                    if (e.key === "Enter") {
+                      e.preventDefault(); // Prevent main form submission
+                      handleAddCustomSection();
+                    }
+                  }}
+                  placeholder="Custom section (e.g. O)"
+                  className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-44"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddCustomSection}
+                  disabled={!customSection.trim()}
+                  className="px-3 py-1.5 text-sm font-medium bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Add
+                </button>
+              </div>
+
+              {/* Preview of actual created sections */}
               {selectedSections.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-1.5">
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-1.5">
                   {(courseType === "Lab"
                     ? selectedSections.flatMap(s => [`${s}1`, `${s}2`])
                     : selectedSections
@@ -301,7 +337,7 @@ export default function NewCoursePage() {
                       {sec}
                     </span>
                   ))}
-                  <span className="px-2 py-0.5 text-xs text-slate-400">
+                  <span className="px-2 py-0.5 text-xs text-slate-400 flex items-center">
                     → {courseType === "Lab" ? selectedSections.length * 2 : selectedSections.length} section{(courseType === "Lab" ? selectedSections.length * 2 : selectedSections.length) !== 1 ? "s" : ""} will be created
                   </span>
                 </div>
@@ -311,7 +347,7 @@ export default function NewCoursePage() {
             <p className="text-xs text-slate-500 mt-2">
               {courseType === "Lab"
                 ? "Lab mode: each section becomes two sub-sections (e.g. A → A1, A2)."
-                : "Theory mode: one section per letter."}
+                : "Theory mode: one section per entry."}
             </p>
           </div>
 
@@ -319,11 +355,7 @@ export default function NewCoursePage() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className={labelCls}>Students per Group</label>
-              <select
-                value={groupSize}
-                onChange={e => setGroupSize(e.target.value)}
-                className={inputCls}
-              >
+              <select value={groupSize} onChange={e => setGroupSize(e.target.value)} className={inputCls}>
                 {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
                   <option key={n} value={n}>
                     {n} {n === 1 ? "student" : "students"} per group
@@ -362,7 +394,6 @@ export default function NewCoursePage() {
               {loading ? "Creating…" : "Take Course"}
             </button>
           </div>
-
         </form>
       </main>
     </div>
