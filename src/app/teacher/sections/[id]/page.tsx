@@ -37,14 +37,13 @@ export default async function SectionDetailPage({
     .order("group_number");
 
   const groupIds = groups?.map(g => g.id) || [];
-  const { data: marks } = await supabase
+  await supabase
     .from("marks")
     .select("*")
     .in("group_id", groupIds.length > 0 ? groupIds : ['dummy']);
 
   const totalGroups = groups?.length ?? 0;
   const submittedGroups = groups?.filter((g) => g.slide_link).length ?? 0;
-  const pendingGroups = totalGroups - submittedGroups;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">

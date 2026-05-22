@@ -98,7 +98,7 @@ export default function TeacherLoginPage() {
         </div>
 
         <p className="text-center mt-6 text-xs text-slate-400">
-          Don't have an account yet?{" "}
+          Don&apos;t have an account yet?{" "}
           <Link href="/teacher/register" className="text-blue-600 hover:underline transition-colors font-medium">
             Register here
           </Link>

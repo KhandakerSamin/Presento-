@@ -122,7 +122,7 @@ export default function NewCoursePage() {
 
       // Group generation for each newly inserted section
       if (totalStudents && Number(totalStudents) > 0 && newSections) {
-        const allGroups: any[] = [];
+        const allGroups: { section_id: string, group_number: number }[] = [];
         const numGroups = Math.ceil(Number(totalStudents) / Number(groupSize));
         
         newSections.forEach(newSec => {
@@ -141,8 +141,8 @@ export default function NewCoursePage() {
 
       router.push(`/teacher/dashboard`);
       router.refresh();
-    } catch (err: any) {
-      setError(err.message || "Failed to create sections.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create sections.");
       setLoading(false);
     }
   }
@@ -311,7 +311,7 @@ export default function NewCoursePage() {
                   name="topicAssignment" 
                   value="manual"
                   checked={assignmentType === "manual"}
-                  onChange={(e) => setAssignmentType(e.target.value as any)}
+                  onChange={(e) => setAssignmentType(e.target.value as "manual" | "random" | "student_select" | "proposal")}
                   className="text-blue-600 focus:ring-2 focus:ring-blue-500"
                 />
                 Assign manually
@@ -322,7 +322,7 @@ export default function NewCoursePage() {
                   name="topicAssignment" 
                   value="random"
                   checked={assignmentType === "random"}
-                  onChange={(e) => setAssignmentType(e.target.value as any)}
+                  onChange={(e) => setAssignmentType(e.target.value as "manual" | "random" | "student_select" | "proposal")}
                   className="text-blue-600 focus:ring-2 focus:ring-blue-500"
                 />
                 Give random topic
@@ -333,7 +333,7 @@ export default function NewCoursePage() {
                   name="topicAssignment" 
                   value="student_select"
                   checked={assignmentType === "student_select"}
-                  onChange={(e) => setAssignmentType(e.target.value as any)}
+                  onChange={(e) => setAssignmentType(e.target.value as "manual" | "random" | "student_select" | "proposal")}
                   className="text-blue-600 focus:ring-2 focus:ring-blue-500"
                 />
                 Student select topic (max 1 per group)
@@ -344,7 +344,7 @@ export default function NewCoursePage() {
                   name="topicAssignment" 
                   value="proposal"
                   checked={assignmentType === "proposal"}
-                  onChange={(e) => setAssignmentType(e.target.value as any)}
+                  onChange={(e) => setAssignmentType(e.target.value as "manual" | "random" | "student_select" | "proposal")}
                   className="text-blue-600 focus:ring-2 focus:ring-blue-500"
                 />
                 Take topic proposal from student

@@ -88,9 +88,9 @@ export default function AddCourseModal() {
         totalSections: "3",
       });
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      alert("Error creating course: " + error.message);
+      alert("Error creating course: " + (error instanceof Error ? error.message : "Unknown error"));
     } finally {
       setLoading(false);
     }

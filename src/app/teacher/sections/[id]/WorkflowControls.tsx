@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Group, Mark, Section } from "@/types";
+import { useState } from "react";
+import { Group, Section } from "@/types";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import {
@@ -10,7 +10,6 @@ import {
   Users,
   MessageSquare,
   BookOpen,
-  Settings,
   ListTodo,
   CheckCircle2,
   X,
@@ -42,7 +41,6 @@ export default function WorkflowControls({
   const router = useRouter();
 
   const proposedGroups = groups.filter((g) => g.topic && g.topic_status === "pending");
-  const approvedGroups = groups.filter((g) => g.topic_status === "approved");
   const groupsWithoutTopics = groups.filter((g) => !g.topic);
 
   // --- SAVE MODE ---
@@ -62,8 +60,8 @@ export default function WorkflowControls({
       alert("Configuration saved successfully!");
       setShowAssignModal(false);
       router.refresh();
-    } catch (e: any) {
-      alert("Failed to save: " + e.message);
+    } catch (e) {
+      alert("Failed to save: " + (e instanceof Error ? e.message : 'Unknown error'));
     } finally {
       setLoading(false);
     }
@@ -422,7 +420,7 @@ function Modal({ title, children, onClose }: { title: string; children: React.Re
   );
 }
 
-function Option({ icon: Icon, title, desc, selected, onClick }: any) {
+function Option({ icon: Icon, title, desc, selected, onClick }: { icon: React.ElementType, title: string, desc: string, selected: boolean, onClick: () => void }) {
   return (
     <div
       onClick={onClick}

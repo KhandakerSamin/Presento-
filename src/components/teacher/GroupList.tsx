@@ -2,7 +2,7 @@
 
 import { Group, Section } from "@/types";
 import GroupTopicButton from "./GroupTopicButton";
-import { Edit2, Users } from "lucide-react";
+import { Users } from "lucide-react";
 
 interface Props {
   groups: Group[];

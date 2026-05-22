@@ -52,7 +52,7 @@ export default function AssignedTopicSection({ section, groups }: Props) {
 
     const timer = setTimeout(handleSave, 500);
     return () => clearTimeout(timer);
-  }, [enabled, mode]);
+  }, [enabled, mode, loading, router, section.id, supabase]);
 
   const toggleEnabled = () => {
     setEnabled(!enabled);
@@ -203,7 +203,7 @@ function ManualAssignmentUI({ section, groups }: { section: Section; groups: Gro
   return (
     <div className="space-y-3">
       <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-3 text-sm text-blue-700 dark:text-blue-300">
-        <p>Each group will have an <strong>"Add Topic"</strong> button. Teachers can manually assign topics to each group individually.</p>
+        <p>Each group will have an <strong>&quot;Add Topic&quot;</strong> button. Teachers can manually assign topics to each group individually.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 text-center text-sm">
@@ -298,7 +298,7 @@ function SerialRandomUI({ section, groups }: { section: Section; groups: Group[]
 
       alert(`Randomly assigned topics to ${groupsToAssign.length} groups`);
       router.refresh();
-    } catch (e) {
+    } catch {
       alert("Error during random assignment");
     } finally {
       setLoading(false);
@@ -361,7 +361,7 @@ function SerialRandomUI({ section, groups }: { section: Section; groups: Group[]
   );
 }
 
-function StudentSelectionUI({ section, groups }: { section: Section; groups: Group[] }) {
+function StudentSelectionUI({ section }: { section: Section; groups: Group[] }) {
   const supabase = createClient();
   const router = useRouter();
   const [topics, setTopics] = useState<string[]>(section.topics || []);
@@ -492,7 +492,7 @@ function StudentSelectionUI({ section, groups }: { section: Section; groups: Gro
   );
 }
 
-function ProposalReviewUI({ section, groups }: { section: Section; groups: Group[] }) {
+function ProposalReviewUI({ groups }: { section: Section; groups: Group[] }) {
   const supabase = createClient();
   const router = useRouter();
   const [loading, setLoading] = useState(false);

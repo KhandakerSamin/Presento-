@@ -154,7 +154,7 @@ function GroupCard({
       // Mocked HEAD request for simple URL validation & checking pseudo-access.
       await fetch(url, { method: "HEAD", mode: "no-cors" });
       setSlideStatus("valid");
-    } catch (e) {
+    } catch {
       setSlideStatus("warn");
     }
   };
@@ -303,7 +303,7 @@ function GroupCard({
               {/* Status banner if pending approval */}
               {group.topic && group.topic_status === 'pending' && (
                  <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 text-amber-800 text-sm">
-                    <strong>Topic proposal pending:</strong> "{group.topic}"
+                    <strong>Topic proposal pending:</strong> &quot;{group.topic}&quot;
                  </div>
               )}
 
@@ -334,10 +334,10 @@ function GroupCard({
                     <div className="mt-2 text-xs">
                        <div className="flex items-start gap-1.5 text-amber-600 font-medium mb-1.5 bg-amber-50 p-2 rounded-lg border border-amber-100">
                           <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" /> 
-                          <p>Warning: Give public access before sharing, otherwise the teacher won't be able to open it.</p>
+                          <p>Warning: Give public access before sharing, otherwise the teacher won&apos;t be able to open it.</p>
                        </div>
                        {slideStatus === "checking" && <p className="text-slate-500 flex items-center gap-1.5 mt-2"><Loader2 className="w-3.5 h-3.5 animate-spin" /> Verifying link access...</p>}
-                       {slideStatus === "warn" && <p className="text-amber-600 flex items-center gap-1.5 mt-2"><AlertTriangle className="w-3.5 h-3.5" /> Couldn't verify auto-access. Make sure it's public.</p>}
+                       {slideStatus === "warn" && <p className="text-amber-600 flex items-center gap-1.5 mt-2"><AlertTriangle className="w-3.5 h-3.5" /> Couldn&apos;t verify auto-access. Make sure it&apos;s public.</p>}
                        {slideStatus === "valid" && <p className="text-emerald-600 flex items-center gap-1.5 mt-2"><CheckCircle2 className="w-3.5 h-3.5" /> Link formatted correctly and reachable</p>}
                     </div>
                  </div>

@@ -17,7 +17,9 @@ export default function ClientSectionControls({
   const [loading, setLoading] = useState<string | null>(null);
   const [showModal, setShowModal] = useState<"assign" | "manual" | "proposals" | null>(null);
   const [assignmentType, setAssignmentType] = useState<"manual" | "random" | "student_select" | "proposal">(
-    (section as any).topic_assignment_mode || (section as any).topic_assignment_type || "manual"
+    (section as Section & { topic_assignment_mode?: string, topic_assignment_type?: string }).topic_assignment_mode || 
+    (section as Section & { topic_assignment_mode?: string, topic_assignment_type?: string }).topic_assignment_type || 
+    "manual"
   );
   const [topicsInput, setTopicsInput] = useState("");
   const [topics, setTopics] = useState<string[]>(section.topics || []);
@@ -131,7 +133,7 @@ export default function ClientSectionControls({
               ].join(",");
               csv += row + "\n";
           } else {
-              for (const [index, student] of members.entries()) {
+              for (const student of members) {
                   const row = [
                       group.group_number,
                       `"${group.topic || ''}"`,
@@ -158,6 +160,9 @@ export default function ClientSectionControls({
       window.URL.revokeObjectURL(url);
   }
 
+  const topicMode = (section as Section & { topic_assignment_mode?: string, topic_assignment_type?: string }).topic_assignment_mode || 
+    (section as Section & { topic_assignment_mode?: string, topic_assignment_type?: string }).topic_assignment_type;
+
   return (
     <>
       {/* Main Buttons */}
@@ -169,7 +174,7 @@ export default function ClientSectionControls({
       </button>
 
       {/* Mode-specific action buttons */}
-      {((section as any).topic_assignment_mode === "random" || (section as any).topic_assignment_type === "random") && (
+      {topicMode === "random" && (
         <button
           onClick={handleRandomAssign}
           disabled={loading === "topics" || topics.length === 0}
@@ -180,7 +185,7 @@ export default function ClientSectionControls({
         </button>
       )}
 
-      {((section as any).topic_assignment_mode === "manual" || (section as any).topic_assignment_type === "manual") && (
+      {topicMode === "manual" && (
         <button
           onClick={() => setShowModal("manual")}
           className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-xl transition-colors"
@@ -189,7 +194,7 @@ export default function ClientSectionControls({
         </button>
       )}
 
-      {((section as any).topic_assignment_mode === "student_select" || (section as any).topic_assignment_type === "student_select") && (
+      {topicMode === "student_select" && (
         <button
           disabled={topics.length === 0}
           className="px-4 py-2 bg-purple-600 opacity-50 cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors"
@@ -438,7 +443,6 @@ export default function ClientSectionControls({
           groups={groups}
           section={section}
           onClose={() => setShowModal(null)}
-          router={router}
         />
       )}
 
@@ -448,7 +452,6 @@ export default function ClientSectionControls({
           groups={groups}
           section={section}
           onClose={() => setShowModal(null)}
-          router={router}
         />
       )}
     </>
@@ -459,13 +462,12 @@ function ManageTopicsModal({
   groups,
   section,
   onClose,
-  router,
 }: {
   groups: Group[];
   section: Section;
   onClose: () => void;
-  router: any;
 }) {
+  const router = useRouter();
   const supabase = createClient();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [tempTopic, setTempTopic] = useState("");
@@ -491,7 +493,7 @@ function ManageTopicsModal({
         setEditingId(null);
         router.refresh();
       }
-    } catch (e) {
+    } catch {
       alert("An error occurred while saving");
     } finally {
       setLoading(false);
@@ -608,13 +610,12 @@ function ReviewProposalsModal({
   groups,
   section,
   onClose,
-  router,
 }: {
   groups: Group[];
   section: Section;
   onClose: () => void;
-  router: any;
 }) {
+  const router = useRouter();
   const supabase = createClient();
   const [loading, setLoading] = useState(false);
 
@@ -631,7 +632,7 @@ function ReviewProposalsModal({
       } else {
         router.refresh();
       }
-    } catch (e) {
+    } catch {
       alert("An error occurred");
     } finally {
       setLoading(false);
@@ -688,7 +689,7 @@ function ReviewProposalsModal({
                   </div>
 
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    💬 Students' Reasoning: <span className="italic">{g.topic_proposal_reason || "No reason provided"}</span>
+                    💬 Students&apos; Reasoning: <span className="italic">{g.topic_proposal_reason || "No reason provided"}</span>
                   </p>
                 </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useState, useEffect, useRef } from 'react';
+import { FormEvent, useState, useRef } from 'react';
 import { Upload, Plus, X, CheckCircle, Check } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { updatePresentation } from '@/lib/presentations/actions';
@@ -25,13 +25,11 @@ export function EditPresentationForm({ presentation }: EditPresentationFormProps
 
   const [tagInput, setTagInput] = useState('');
   const [thumbnail, setThumbnail] = useState<File | null>(null);
-  const [presentationFile, setPresentationFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   const thumbnailRef = useRef<HTMLInputElement>(null);
-  const presentationRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -61,20 +59,6 @@ export function EditPresentationForm({ presentation }: EditPresentationFormProps
   };
 
   const validateFiles = () => {
-    if (presentationFile) {
-      const maxSize = 100 * 1024 * 1024; // 100MB
-      if (presentationFile.size > maxSize) {
-        setError('Presentation file must be less than 100MB');
-        return false;
-      }
-
-      const validFormats = ['application/pdf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
-      if (!validFormats.includes(presentationFile.type)) {
-        setError('Presentation must be a PDF or PPTX file');
-        return false;
-      }
-    }
-
     if (thumbnail) {
       const maxThumbSize = 5 * 1024 * 1024; // 5MB
       if (thumbnail.size > maxThumbSize) {
@@ -316,6 +300,7 @@ export function EditPresentationForm({ presentation }: EditPresentationFormProps
             <label className="block text-sm font-medium text-slate-900 dark:text-white mb-2">
               Current Thumbnail
             </label>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={presentation.thumbnail_path}
               alt="Current thumbnail"

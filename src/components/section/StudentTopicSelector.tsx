@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Group, Section } from "@/types";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 
 export default function StudentTopicSelector({
   section,
@@ -47,8 +47,8 @@ export default function StudentTopicSelector({
       setTimeout(() => {
         router.refresh();
       }, 1500);
-    } catch (error: any) {
-      alert("Error selecting topic: " + error.message);
+    } catch (error) {
+      alert("Error selecting topic: " + (error instanceof Error ? error.message : "Unknown error"));
     } finally {
       setLoading(false);
     }

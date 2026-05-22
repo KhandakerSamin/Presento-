@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { Send, CheckCircle2, Loader2 } from "lucide-react";
 
 export default function ProposalSubmission({
-  section,
   group,
 }: {
   section: Section;
@@ -44,8 +43,8 @@ export default function ProposalSubmission({
       setTimeout(() => {
         router.refresh();
       }, 1500);
-    } catch (error: any) {
-      alert("Error submitting proposal: " + error.message);
+    } catch (error) {
+      alert("Error submitting proposal: " + (error instanceof Error ? error.message : "Unknown error"));
     } finally {
       setLoading(false);
     }

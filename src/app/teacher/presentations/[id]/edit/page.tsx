@@ -11,7 +11,7 @@ interface EditPresentationPageProps {
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params }: EditPresentationPageProps) {
+export async function generateMetadata() {
   return {
     title: 'Edit Presentation - Presento',
     description: 'Edit presentation details',
