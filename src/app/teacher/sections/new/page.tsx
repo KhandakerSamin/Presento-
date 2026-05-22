@@ -5,76 +5,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { generateSectionCode } from "@/lib/utils";
 import Link from "next/link";
-import Select from "react-select";
 
-type AssignmentType = "manual" | "random" | "student_select" | "proposal";
-
-const sectionOptions = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N"].map(s => ({
-  label: s,
-  value: s,
-}));
-
-// react-select custom styles — adapts to light/dark automatically via CSS vars
-const selectStyles = {
-  control: (base: Record<string, unknown>, state: { isFocused: boolean }) => ({
-    ...base,
-    backgroundColor: "transparent",
-    borderColor: state.isFocused ? "#3b82f6" : "rgb(var(--border-color, 226 232 240))",
-    borderRadius: "0.75rem",
-    boxShadow: state.isFocused ? "0 0 0 2px rgba(59,130,246,0.3)" : "none",
-    minHeight: "42px",
-    "&:hover": { borderColor: "#3b82f6" },
-  }),
-  menu: (base: Record<string, unknown>) => ({
-    ...base,
-    borderRadius: "0.75rem",
-    overflow: "hidden",
-    zIndex: 50,
-  }),
-  menuList: (base: Record<string, unknown>) => ({
-    ...base,
-    padding: "4px",
-  }),
-  option: (base: Record<string, unknown>, state: { isSelected: boolean; isFocused: boolean }) => ({
-    ...base,
-    borderRadius: "0.5rem",
-    backgroundColor: state.isSelected
-      ? "#3b82f6"
-      : state.isFocused
-      ? "rgba(59,130,246,0.08)"
-      : "transparent",
-    color: state.isSelected ? "#fff" : "inherit",
-    cursor: "pointer",
-    padding: "6px 10px",
-  }),
-  multiValue: (base: Record<string, unknown>) => ({
-    ...base,
-    backgroundColor: "rgba(59,130,246,0.12)",
-    borderRadius: "0.4rem",
-  }),
-  multiValueLabel: (base: Record<string, unknown>) => ({
-    ...base,
-    color: "#3b82f6",
-    fontWeight: 600,
-    fontSize: "0.8rem",
-    padding: "1px 4px",
-  }),
-  multiValueRemove: (base: Record<string, unknown>) => ({
-    ...base,
-    color: "#3b82f6",
-    borderRadius: "0 0.4rem 0.4rem 0",
-    "&:hover": { backgroundColor: "rgba(239,68,68,0.15)", color: "#ef4444" },
-  }),
-  placeholder: (base: Record<string, unknown>) => ({
-    ...base,
-    color: "#94a3b8",
-    fontSize: "0.875rem",
-  }),
-  input: (base: Record<string, unknown>) => ({
-    ...base,
-    color: "inherit",
-  }),
-};
+const ALL_SECTIONS = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N"];
 
 export default function NewCoursePage() {
   const router = useRouter();
@@ -85,18 +17,22 @@ export default function NewCoursePage() {
   const [courseTitle, setCourseTitle] = useState("");
   const [courseCode, setCourseCode] = useState("");
   const [courseType, setCourseType] = useState<"Theory" | "Lab">("Theory");
-  const [selectedSections, setSelectedSections] = useState<{ label: string; value: string }[]>([]);
+  const [selectedSections, setSelectedSections] = useState<string[]>([]);
   const [groupSize, setGroupSize] = useState("5");
   const [totalStudents, setTotalStudents] = useState("50");
-  const [assignmentType, setAssignmentType] = useState<AssignmentType>("manual");
-  const [topics, setTopics] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Sync default total students when course type toggles
+  // Reset total students default when course type changes
   useEffect(() => {
     setTotalStudents(courseType === "Lab" ? "25" : "50");
   }, [courseType]);
+
+  function toggleSection(sec: string) {
+    setSelectedSections(prev =>
+      prev.includes(sec) ? prev.filter(s => s !== sec) : [...prev, sec]
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -160,15 +96,12 @@ export default function NewCoursePage() {
     }
 
     // Expand sections — Lab splits each letter into two sub-sections
-    const baseSections = selectedSections.map(s => s.value);
     const finalSections: string[] =
       courseType === "Lab"
-        ? baseSections.flatMap(sec => [`${sec}1`, `${sec}2`])
-        : baseSections;
+        ? selectedSections.flatMap(sec => [`${sec}1`, `${sec}2`])
+        : selectedSections;
 
     try {
-      const topicsArray = (topics || "").split("\n").map(t => t.trim()).filter(Boolean);
-
       const sectionsToInsert = finalSections.map(sec => {
         const secCode = generateSectionCode(currDeptCode, courseCode, Number(batch), sec);
         return {
@@ -181,8 +114,6 @@ export default function NewCoursePage() {
           group_size: Number(groupSize),
           is_locked: false,
           is_archived: false,
-          topic_assignment_type: assignmentType,
-          topics: topicsArray,
         };
       });
 
@@ -202,7 +133,6 @@ export default function NewCoursePage() {
             group_number: i + 1,
           }))
         );
-
         if (allGroups.length > 0) {
           const { error: groupsError } = await supabase.from("groups").insert(allGroups);
           if (groupsError) throw groupsError;
@@ -216,6 +146,11 @@ export default function NewCoursePage() {
       setLoading(false);
     }
   }
+
+  const inputCls =
+    "w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors";
+
+  const labelCls = "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5";
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
@@ -239,16 +174,15 @@ export default function NewCoursePage() {
         <p className="text-sm text-slate-500 mb-8">Fill in the details to generate sections.</p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+
           {/* Semester + Batch */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Semester
-              </label>
+              <label className={labelCls}>Semester</label>
               <select
                 value={semester}
                 onChange={e => setSemester(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputCls}
               >
                 <option>Summer-2025</option>
                 <option>Fall-2025</option>
@@ -258,19 +192,15 @@ export default function NewCoursePage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Batch
-              </label>
-              {/* Plain text input — no spinner arrows */}
+              <label className={labelCls}>Batch</label>
               <input
                 type="text"
                 inputMode="numeric"
-                pattern="[0-9]*"
                 value={batch}
                 onChange={e => setBatch(e.target.value.replace(/\D/g, ""))}
                 placeholder="e.g. 42"
                 required
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputCls}
               />
             </div>
           </div>
@@ -278,84 +208,122 @@ export default function NewCoursePage() {
           {/* Course Title + Code */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Course Title
-              </label>
+              <label className={labelCls}>Course Title</label>
               <input
                 value={courseTitle}
                 onChange={e => setCourseTitle(e.target.value)}
                 placeholder="e.g. Software Engineering"
                 required
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputCls}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Course Code
-              </label>
+              <label className={labelCls}>Course Code</label>
               <input
                 value={courseCode}
                 onChange={e => setCourseCode(e.target.value)}
                 placeholder="e.g. CSE320"
                 required
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputCls}
               />
             </div>
           </div>
 
           {/* Course Type */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-              Course Type
-            </label>
-            <div className="flex gap-4">
+            <label className={labelCls}>Course Type</label>
+            <div className="flex gap-3">
               {(["Theory", "Lab"] as const).map(type => (
-                <label key={type} className="flex items-center gap-2 cursor-pointer text-slate-700 dark:text-slate-300">
-                  <input
-                    type="radio"
-                    checked={courseType === type}
-                    onChange={() => setCourseType(type)}
-                    className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                  />
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setCourseType(type)}
+                  className={`px-5 py-2 rounded-xl text-sm font-medium border transition-colors ${
+                    courseType === type
+                      ? "bg-blue-600 border-blue-600 text-white"
+                      : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-400 dark:hover:border-blue-500"
+                  }`}
+                >
                   {type}
-                </label>
+                </button>
               ))}
             </div>
           </div>
 
-          {/* Sections — react-select, properly styled */}
+          {/* Sections — custom toggle grid, no react-select */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-              Sections
-            </label>
-            <Select
-              isMulti
-              options={sectionOptions}
-              value={selectedSections}
-              onChange={val => setSelectedSections(val as { label: string; value: string }[])}
-              styles={selectStyles}
-              placeholder="Select sections (e.g. A, B, C)…"
-              classNamePrefix="rs"
-            />
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                Sections
+              </label>
+              {selectedSections.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedSections([])}
+                  className="text-xs text-slate-400 hover:text-red-500 transition-colors"
+                >
+                  Clear all
+                </button>
+              )}
+            </div>
+
+            <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+              <div className="flex flex-wrap gap-2">
+                {ALL_SECTIONS.map(sec => {
+                  const active = selectedSections.includes(sec);
+                  return (
+                    <button
+                      key={sec}
+                      type="button"
+                      onClick={() => toggleSection(sec)}
+                      className={`w-9 h-9 rounded-lg text-sm font-semibold border transition-all ${
+                        active
+                          ? "bg-blue-600 border-blue-600 text-white shadow-sm"
+                          : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400"
+                      }`}
+                    >
+                      {sec}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {selectedSections.length > 0 && (
+                <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-1.5">
+                  {(courseType === "Lab"
+                    ? selectedSections.flatMap(s => [`${s}1`, `${s}2`])
+                    : selectedSections
+                  ).map(sec => (
+                    <span
+                      key={sec}
+                      className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 text-xs font-medium border border-blue-100 dark:border-blue-900"
+                    >
+                      {sec}
+                    </span>
+                  ))}
+                  <span className="px-2 py-0.5 text-xs text-slate-400">
+                    → {courseType === "Lab" ? selectedSections.length * 2 : selectedSections.length} section{(courseType === "Lab" ? selectedSections.length * 2 : selectedSections.length) !== 1 ? "s" : ""} will be created
+                  </span>
+                </div>
+              )}
+            </div>
+
             <p className="text-xs text-slate-500 mt-2">
               {courseType === "Lab"
-                ? "Lab mode: 2 sub-sections generated per choice (e.g. A → A1, A2)."
-                : "Theory mode: 1 section generated per choice."}
+                ? "Lab mode: each section becomes two sub-sections (e.g. A → A1, A2)."
+                : "Theory mode: one section per letter."}
             </p>
           </div>
 
           {/* Group size + Total students */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Students per Group
-              </label>
+              <label className={labelCls}>Students per Group</label>
               <select
                 value={groupSize}
                 onChange={e => setGroupSize(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputCls}
               >
-                {/* 1–10 */}
                 {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
                   <option key={n} value={n}>
                     {n} {n === 1 ? "student" : "students"} per group
@@ -364,70 +332,17 @@ export default function NewCoursePage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Total Students per Section
-              </label>
-              {/* Plain text input — no spinner arrows; default depends on courseType */}
+              <label className={labelCls}>Total Students per Section</label>
               <input
                 type="text"
                 inputMode="numeric"
-                pattern="[0-9]*"
                 value={totalStudents}
                 onChange={e => setTotalStudents(e.target.value.replace(/\D/g, ""))}
                 placeholder={courseType === "Lab" ? "25" : "50"}
                 required
-                className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputCls}
               />
             </div>
-          </div>
-
-          {/* Topic Assignment */}
-          <div className="space-y-4 p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-900">
-            <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              Topic Assignment Options
-            </h3>
-
-            <div className="space-y-2.5 text-sm text-slate-700 dark:text-slate-300">
-              {(
-                [
-                  { value: "manual",         label: "Assign manually" },
-                  { value: "random",         label: "Give random topic" },
-                  { value: "student_select", label: "Student selects topic (max 1 per group)" },
-                  { value: "proposal",       label: "Take topic proposal from student" },
-                ] as { value: AssignmentType; label: string }[]
-              ).map(opt => (
-                <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="topicAssignment"
-                    value={opt.value}
-                    checked={assignmentType === opt.value}
-                    onChange={() => setAssignmentType(opt.value)}
-                    className="w-4 h-4 text-blue-600 accent-blue-600 focus:ring-2 focus:ring-blue-500"
-                  />
-                  {opt.label}
-                </label>
-              ))}
-            </div>
-
-            {/* Topics textarea — only for random or student_select */}
-            {(assignmentType === "random" || assignmentType === "student_select") && (
-              <div className="mt-2 pt-4 border-t border-slate-200 dark:border-slate-700">
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                  Available Topics <span className="text-slate-400 font-normal">(one per line)</span>
-                </label>
-                <textarea
-                  rows={5}
-                  placeholder={"Machine Learning Basics\nReact Hooks Deep Dive\nDatabase Optimization"}
-                  value={topics}
-                  onChange={e => setTopics(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                />
-                <p className="text-xs text-slate-500 mt-1">
-                  Add multiple topics separated by new lines.
-                </p>
-              </div>
-            )}
           </div>
 
           {/* Error */}
@@ -447,6 +362,7 @@ export default function NewCoursePage() {
               {loading ? "Creating…" : "Take Course"}
             </button>
           </div>
+
         </form>
       </main>
     </div>
