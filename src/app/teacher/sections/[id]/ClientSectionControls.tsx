@@ -17,9 +17,9 @@ export default function ClientSectionControls({
   const [loading, setLoading] = useState<string | null>(null);
   const [showModal, setShowModal] = useState<"assign" | "manual" | "proposals" | null>(null);
   const [assignmentType, setAssignmentType] = useState<"manual" | "random" | "student_select" | "proposal">(
-    (section as Section & { topic_assignment_mode?: string, topic_assignment_type?: string }).topic_assignment_mode || 
+    ((section as Section & { topic_assignment_mode?: string, topic_assignment_type?: string }).topic_assignment_mode || 
     (section as Section & { topic_assignment_mode?: string, topic_assignment_type?: string }).topic_assignment_type || 
-    "manual"
+    "manual") as "manual" | "random" | "student_select" | "proposal"
   );
   const [topicsInput, setTopicsInput] = useState("");
   const [topics, setTopics] = useState<string[]>(section.topics || []);

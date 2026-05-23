@@ -29,6 +29,7 @@ export default function NewCoursePage() {
 
   // Reset total students default when course type changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTotalStudents(courseType === "Lab" ? "25" : "50");
   }, [courseType]);
 
@@ -194,8 +195,6 @@ export default function NewCoursePage() {
             <div>
               <label className={labelCls}>Semester</label>
               <select value={semester} onChange={e => setSemester(e.target.value)} className={inputCls}>
-                <option>Summer-2025</option>
-                <option>Fall-2025</option>
                 <option>Spring-2026</option>
                 <option>Summer-2026</option>
                 <option>Fall-2026</option>
