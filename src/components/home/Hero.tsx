@@ -5,15 +5,15 @@ export default function Hero() {
   return (
     <section className="min-h-screen flex flex-col items-center justify-center px-4 pt-24 pb-16 bg-linear-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
       {/* Badge */}
-      <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950 border border-blue-100 dark:border-blue-900 text-blue-700 dark:text-blue-300 text-xs font-medium">
-        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+      <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 text-indigo-700 dark:text-indigo-300 text-xs font-medium">
+        <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
         Built for SWE Department — DIU
       </div>
 
       {/* Heading */}
       <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-center text-slate-900 dark:text-white leading-tight max-w-3xl">
         Manage Class{" "}
-        <span className="text-blue-600 dark:text-blue-400">Presentations</span>{" "}
+        <span className="text-indigo-600 dark:text-indigo-400">Presentations</span>{" "}
         Smarter
       </h1>
 
@@ -27,13 +27,13 @@ export default function Hero() {
       <div className="mt-8 flex flex-col sm:flex-row gap-3">
         <a
           href="#search"
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors text-center"
+          className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-colors text-center"
         >
           Enter Section
         </a>
         <Link
           href="/teacher/login"
-          className="px-6 py-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700 transition-colors text-center"
+          className="px-6 py-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors text-center"
         >
           Teacher Login
         </Link>

@@ -25,7 +25,7 @@ export default function Navbar() {
           href="/"
           className="flex items-center gap-2 font-bold text-xl text-slate-900 dark:text-white shrink-0"
         >
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm font-bold">
+          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white text-sm font-bold">
             P
           </div>
           Presento
@@ -51,11 +51,11 @@ export default function Navbar() {
             value={searchCode}
             onChange={(e) => setSearchCode(e.target.value)}
             placeholder="Enter section code..."
-            className="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
           <button
             type="submit"
-            className="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors shrink-0"
+            className="px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors shrink-0"
           >
             Go
           </button>
@@ -64,7 +64,7 @@ export default function Navbar() {
         {/* Teacher Login */}
         <Link
           href="/teacher/login"
-          className="hidden md:block px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950 transition-colors"
+          className="hidden md:block px-4 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors"
         >
           Teacher Login
         </Link>
@@ -89,11 +89,11 @@ export default function Navbar() {
               value={searchCode}
               onChange={(e) => setSearchCode(e.target.value)}
               placeholder="Enter section code..."
-              className="flex-1 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
             <button
               type="submit"
-              className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg"
+              className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg"
             >
               Go
             </button>
@@ -106,7 +106,7 @@ export default function Navbar() {
           </a>
           <Link
             href="/teacher/login"
-            className="text-sm font-medium text-blue-600 dark:text-blue-400"
+            className="text-sm font-medium text-indigo-600 dark:text-indigo-400"
             onClick={() => setMenuOpen(false)}
           >
             Teacher Login →
