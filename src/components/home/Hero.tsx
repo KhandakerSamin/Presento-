@@ -59,7 +59,7 @@ export default function Hero() {
                 i === 0
                   ? "bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400"
                   : i === 1
-                  ? "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400"
+                  ? "bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400"
                   : "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400"
               }`}
             >

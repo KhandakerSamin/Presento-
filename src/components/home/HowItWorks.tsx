@@ -52,7 +52,7 @@ export default function HowItWorks() {
       <div className="max-w-5xl mx-auto">
         {/* Heading */}
         <div className="text-center mb-16">
-          <p className="text-sm font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-3">
+          <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-3">
             How it works
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">
@@ -74,7 +74,7 @@ export default function HowItWorks() {
                 <span
                   className={`text-xs font-medium px-2 py-1 rounded-full ${
                     s.who === "Teacher"
-                      ? "bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400"
+                      ? "bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400"
                       : s.who === "CR"
                       ? "bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400"
                       : "bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400"

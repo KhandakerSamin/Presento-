@@ -7,7 +7,7 @@ const stats = [
 
 export default function Statistics() {
   return (
-    <section className="py-20 px-4 bg-blue-600 dark:bg-blue-700">
+    <section className="py-20 px-4 bg-indigo-600 dark:bg-indigo-700">
       <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {stats.map((s) => (
@@ -15,7 +15,7 @@ export default function Statistics() {
               <div className="text-4xl font-bold text-white mb-2">
                 {s.value}
               </div>
-              <div className="text-blue-100 text-sm">{s.label}</div>
+              <div className="text-indigo-100 text-sm">{s.label}</div>
             </div>
           ))}
         </div>

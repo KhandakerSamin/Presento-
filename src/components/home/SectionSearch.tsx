@@ -37,13 +37,13 @@ export default function SectionSearch({ large = false }: Props) {
             setError("");
           }}
           placeholder="e.g. SWE-SE221-42-A"
-          className={`flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
+          className={`flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition ${
             large ? "px-4 py-3 text-base" : "px-3 py-2 text-sm"
           }`}
         />
         <button
           type="submit"
-          className={`bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors shrink-0 ${
+          className={`bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-colors shrink-0 ${
             large ? "px-6 py-3 text-base" : "px-4 py-2 text-sm"
           }`}
         >

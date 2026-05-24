@@ -2,25 +2,25 @@ import { Users, Mic, CheckCircle, Paperclip } from "lucide-react";
 
 const features = [
   {
-    icon: <Users className="w-6 h-6 text-blue-600" />,
+    icon: <Users className="w-6 h-6 text-indigo-600" />,
     title: "Group Management",
     description:
       "Students join groups with a single tap. No forms, no login required. Group slots fill up automatically.",
   },
   {
-    icon: <Mic className="w-6 h-6 text-blue-600" />,
+    icon: <Mic className="w-6 h-6 text-indigo-600" />,
     title: "Live Presentation Mode",
     description:
       "Teachers navigate through groups one by one. Current group is highlighted. Slide links open instantly.",
   },
   {
-    icon: <CheckCircle className="w-6 h-6 text-blue-600" />,
+    icon: <CheckCircle className="w-6 h-6 text-indigo-600" />,
     title: "Instant Marking",
     description:
       "Mark each group live during the presentation. Scores are saved to the database in real time.",
   },
   {
-    icon: <Paperclip className="w-6 h-6 text-blue-600" />,
+    icon: <Paperclip className="w-6 h-6 text-indigo-600" />,
     title: "Slide Submission",
     description:
       "Groups submit a Google Slides or Drive link. Submissions lock automatically when the teacher closes the section.",
@@ -36,7 +36,7 @@ export default function Features() {
       <div className="max-w-5xl mx-auto">
         {/* Heading */}
         <div className="text-center mb-16">
-          <p className="text-sm font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-3">
+          <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-3">
             Features
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">
@@ -53,7 +53,7 @@ export default function Features() {
           {features.map((f) => (
             <div
               key={f.title}
-              className="group p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:border-blue-200 dark:hover:border-blue-900 hover:bg-blue-50/30 dark:hover:bg-blue-950/20 transition-all duration-200"
+              className="group p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:border-indigo-200 dark:hover:border-indigo-900 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-all duration-200"
             >
               <div className="mb-4">{f.icon}</div>
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
