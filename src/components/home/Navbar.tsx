@@ -31,20 +31,10 @@ export default function Navbar() {
           Presento
         </Link>
 
-        {/* Center nav links — hidden on mobile */}
-        <div className="hidden md:flex items-center gap-6 text-sm text-slate-600 dark:text-slate-400">
-          <a href="#features" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-            Features
-          </a>
-          <a href="#how-it-works" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-            How it works
-          </a>
-        </div>
-
         {/* Search bar */}
         <form
           onSubmit={handleSearch}
-          className="hidden md:flex items-center gap-2 flex-1 max-w-xs"
+          className="hidden md:flex items-center justify-end gap-2 flex-1"
         >
           <input
             type="text"
@@ -98,12 +88,6 @@ export default function Navbar() {
               Go
             </button>
           </form>
-          <a href="#features" className="text-sm text-slate-600 dark:text-slate-400" onClick={() => setMenuOpen(false)}>
-            Features
-          </a>
-          <a href="#how-it-works" className="text-sm text-slate-600 dark:text-slate-400" onClick={() => setMenuOpen(false)}>
-            How it works
-          </a>
           <Link
             href="/teacher/login"
             className="text-sm font-medium text-indigo-600 dark:text-indigo-400"
