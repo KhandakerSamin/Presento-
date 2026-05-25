@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Group, Section } from "@/types";
-import { Loader2, Plus, AlertTriangle, CheckCircle2, Link as LinkIcon, Trash2, Users, Search, GraduationCap, ArrowRight, ExternalLink } from "lucide-react";
+import { Loader2, Plus, AlertTriangle, CheckCircle2, Link as LinkIcon, Trash2, Users, Search, GraduationCap, ArrowRight, ExternalLink, Pencil, X, Check } from "lucide-react";
 import StudentTopicSelector from "@/components/section/StudentTopicSelector";
 import ProposalSubmission from "@/components/section/ProposalSubmission";
 import Link from "next/link";
@@ -189,10 +189,75 @@ function GroupCardView({
   const [loading, setLoading] = useState<"join" | "slide" | null>(null);
   const [error, setError] = useState("");
 
+  const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", studentId: "" });
+
   const [slideLink, setSlideLink] = useState(group.slide_link || "");
   const [slideStatus, setSlideStatus] = useState<"idle" | "checking" | "warn" | "valid">("idle");
   
   const supabase = createClient();
+
+  const handleEditStart = (s: any) => {
+    setEditingStudentId(s.id);
+    setEditForm({ name: s.name, studentId: s.student_id });
+  };
+
+  const handleEditCancel = () => {
+    setEditingStudentId(null);
+    setEditForm({ name: "", studentId: "" });
+  };
+
+  const handleEditSave = async () => {
+    if (!editForm.name.trim() || !editForm.studentId.trim()) {
+      setError("Please fill in both name and Student ID.");
+      return;
+    }
+    
+    setLoading("join");
+    setError("");
+
+    const allRegisteredStudents = allGroups.flatMap(g => g.students || []);
+    const otherStudents = allRegisteredStudents.filter(s => s.id !== editingStudentId);
+    
+    const alreadyRegistered = otherStudents.find(s => s.student_id.toLowerCase() === editForm.studentId.trim().toLowerCase());
+    if (alreadyRegistered) {
+      setError(`Student ID ${alreadyRegistered.student_id} is already registered in this section.`);
+      setLoading(null);
+      return;
+    }
+    
+    const { error: editError } = await supabase
+      .from("students")
+      .update({ name: editForm.name.trim(), student_id: editForm.studentId.trim() })
+      .eq("id", editingStudentId);
+
+    if (editError) {
+      setError(editError.message);
+    } else {
+      setEditingStudentId(null);
+      await onRefresh();
+    }
+    setLoading(null);
+  };
+
+  const handleDeleteMember = async (id: string) => {
+    if (!confirm("Are you sure you want to remove this member?")) return;
+    
+    setLoading("join");
+    setError("");
+
+    const { error: delError } = await supabase
+      .from("students")
+      .delete()
+      .eq("id", id);
+      
+    if (delError) {
+      setError(delError.message);
+    } else {
+      await onRefresh();
+    }
+    setLoading(null);
+  };
 
   const handleAddRow = () => {
     if (memberInputs.length < remainingSlots) {
@@ -352,13 +417,50 @@ function GroupCardView({
            <div className="space-y-6">
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                {existingStudents.map((s, idx) => (
-                 <div key={s.id} className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700 flex items-center gap-4">
+                 <div key={s.id} className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700 flex items-center gap-4 hover:border-slate-200 dark:hover:border-slate-600 transition-colors relative group">
                     <div className="h-10 w-10 shrink-0 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-sm">
                        {idx + 1}
                     </div>
-                    <div className="overflow-hidden">
-                       <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{s.name}</p>
-                       <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{s.student_id}</p>
+                    {editingStudentId === s.id ? (
+                      <div className="flex-1 flex flex-col gap-2">
+                        <input 
+                          value={editForm.name}
+                          onChange={e => setEditForm({...editForm, name: e.target.value})}
+                          className="w-full text-sm border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 bg-white dark:bg-slate-900 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                        <input 
+                          value={editForm.studentId}
+                          onChange={e => setEditForm({...editForm, studentId: e.target.value})}
+                          className="w-full text-xs text-slate-500 border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 bg-white dark:bg-slate-900 shadow-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                      </div>
+                    ) : (
+                      <div className="overflow-hidden flex-1">
+                         <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{s.name}</p>
+                         <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{s.student_id}</p>
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity absolute right-2 top-1/2 -translate-y-1/2 bg-slate-50 dark:bg-slate-800/80 px-2 py-1 rounded-lg">
+                      {editingStudentId === s.id ? (
+                        <>
+                          <button onClick={handleEditSave} className="p-1.5 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-md" title="Save">
+                            <Check className="w-4 h-4" />
+                          </button>
+                          <button onClick={handleEditCancel} className="p-1.5 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md" title="Cancel">
+                            <X className="w-4 h-4" />
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button onClick={() => handleEditStart(s)} className="p-1.5 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md" title="Edit">
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => handleDeleteMember(s.id)} className="p-1.5 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md" title="Delete">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
                     </div>
                  </div>
                ))}
