@@ -191,6 +191,7 @@ function GroupCardView({
 
   const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ name: "", studentId: "" });
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const [slideLink, setSlideLink] = useState(group.slide_link || "");
   const [slideStatus, setSlideStatus] = useState<"idle" | "checking" | "warn" | "valid">("idle");
@@ -240,8 +241,12 @@ function GroupCardView({
     setLoading(null);
   };
 
-  const handleDeleteMember = async (id: string) => {
-    if (!confirm("Are you sure you want to remove this member?")) return;
+  const handleDeleteMember = (id: string) => {
+    setDeleteConfirmId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirmId) return;
     
     setLoading("join");
     setError("");
@@ -249,7 +254,7 @@ function GroupCardView({
     const { error: delError } = await supabase
       .from("students")
       .delete()
-      .eq("id", id);
+      .eq("id", deleteConfirmId);
       
     if (delError) {
       setError(delError.message);
@@ -257,6 +262,7 @@ function GroupCardView({
       await onRefresh();
     }
     setLoading(null);
+    setDeleteConfirmId(null);
   };
 
   const handleAddRow = () => {
@@ -435,28 +441,28 @@ function GroupCardView({
                         />
                       </div>
                     ) : (
-                      <div className="overflow-hidden flex-1">
+                      <div className="overflow-hidden flex-1 pr-16">
                          <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{s.name}</p>
                          <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{s.student_id}</p>
                       </div>
                     )}
                     
-                    <div className="flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity absolute right-2 top-1/2 -translate-y-1/2 bg-slate-50 dark:bg-slate-800/80 px-2 py-1 rounded-lg">
+                    <div className="flex items-center gap-1 absolute right-2 top-1/2 -translate-y-1/2 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm px-1 py-1 rounded-lg z-10">
                       {editingStudentId === s.id ? (
                         <>
-                          <button onClick={handleEditSave} className="p-1.5 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-md" title="Save">
+                          <button type="button" onClick={handleEditSave} className="p-1.5 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 rounded-md" title="Save">
                             <Check className="w-4 h-4" />
                           </button>
-                          <button onClick={handleEditCancel} className="p-1.5 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md" title="Cancel">
+                          <button type="button" onClick={handleEditCancel} className="p-1.5 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md" title="Cancel">
                             <X className="w-4 h-4" />
                           </button>
                         </>
                       ) : (
                         <>
-                          <button onClick={() => handleEditStart(s)} className="p-1.5 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md" title="Edit">
+                          <button type="button" onClick={() => handleEditStart(s)} className="p-1.5 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md" title="Edit">
                             <Pencil className="w-4 h-4" />
                           </button>
-                          <button onClick={() => handleDeleteMember(s.id)} className="p-1.5 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md" title="Delete">
+                          <button type="button" onClick={() => handleDeleteMember(s.id)} className="p-1.5 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md" title="Delete">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </>
@@ -696,6 +702,40 @@ function GroupCardView({
            </div>
          )}
       </div>
+      
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmId && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-800">
+            <div className="p-6">
+              <div className="flex items-center gap-3 text-red-600 mb-4">
+                <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center shrink-0">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Remove Member</h3>
+              </div>
+              <p className="text-slate-600 dark:text-slate-400 mb-6">Are you sure you want to remove this member? This action cannot be undone.</p>
+              <div className="flex justify-end gap-3">
+                <button 
+                  onClick={() => setDeleteConfirmId(null)}
+                  className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={confirmDelete}
+                  disabled={loading === "join"}
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-sm disabled:opacity-50 flex items-center gap-2"
+                >
+                  {loading === "join" && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Remove Member
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

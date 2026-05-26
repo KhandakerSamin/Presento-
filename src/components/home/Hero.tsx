@@ -1,73 +1,213 @@
-import Link from "next/link";
-import SectionSearch from "./SectionSearch";
+"use client";
+
+import { useId } from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, Circle, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+function ElegantShape({
+  className,
+  delay = 0,
+  width = 400,
+  height = 100,
+  rotate = 0,
+  gradient = "from-white/[0.08]",
+}: {
+  className?: string;
+  delay?: number;
+  width?: number;
+  height?: number;
+  rotate?: number;
+  gradient?: string;
+}) {
+  return (
+    <motion.div
+      initial={{
+        opacity: 0,
+        y: -150,
+        rotate: rotate - 15,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        rotate: rotate,
+      }}
+      transition={{
+        duration: 2.4,
+        delay,
+        ease: [0.23, 0.86, 0.39, 0.96],
+        opacity: { duration: 1.2 },
+      }}
+      className={cn("absolute", className)}
+    >
+      <motion.div
+        animate={{
+          y: [0, 15, 0],
+        }}
+        transition={{
+          duration: 12,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
+        }}
+        style={{
+          width,
+          height,
+        }}
+        className="relative"
+      >
+        <div
+          className={cn(
+            "absolute inset-0 rounded-full",
+            "bg-gradient-to-r to-transparent",
+            gradient,
+            "backdrop-blur-[2px] border-2 border-white/[0.15]",
+            "shadow-[0_8px_32px_0_rgba(255,255,255,0.1)]",
+            "after:absolute after:inset-0 after:rounded-full",
+            "after:bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.2),transparent_70%)]",
+          )}
+        />
+      </motion.div>
+    </motion.div>
+  );
+}
 
 export default function Hero() {
+  const badge = "SWE Department - DIU";
+  const title1 = "Manage Class";
+  const title2 = "Presentations Smarter";
+  const inputId = useId();
+
+  const fadeUpVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 1,
+        delay: 0.5 + i * 0.2,
+        ease: [0.25, 0.4, 0.25, 1],
+      },
+    }),
+  };
+
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center px-4 pt-24 pb-16 bg-linear-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
-      {/* Badge */}
-      <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950 border border-indigo-100 dark:border-indigo-900 text-indigo-700 dark:text-indigo-300 text-xs font-medium">
-        <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse"></span>
-        Built for SWE Department — DIU
+    <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-[#030303]">
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.05] via-transparent to-rose-500/[0.05] blur-3xl" />
+
+      <div className="absolute inset-0 overflow-hidden">
+        <ElegantShape
+          delay={0.3}
+          width={600}
+          height={140}
+          rotate={12}
+          gradient="from-indigo-500/[0.15]"
+          className="left-[-10%] md:left-[-5%] top-[15%] md:top-[20%]"
+        />
+
+        <ElegantShape
+          delay={0.5}
+          width={500}
+          height={120}
+          rotate={-15}
+          gradient="from-rose-500/[0.15]"
+          className="right-[-5%] md:right-[0%] top-[70%] md:top-[75%]"
+        />
+
+        <ElegantShape
+          delay={0.4}
+          width={300}
+          height={80}
+          rotate={-8}
+          gradient="from-violet-500/[0.15]"
+          className="left-[5%] md:left-[10%] bottom-[5%] md:bottom-[10%]"
+        />
+
+        <ElegantShape
+          delay={0.6}
+          width={200}
+          height={60}
+          rotate={20}
+          gradient="from-amber-500/[0.15]"
+          className="right-[15%] md:right-[20%] top-[10%] md:top-[15%]"
+        />
+
+        <ElegantShape
+          delay={0.7}
+          width={150}
+          height={40}
+          rotate={-25}
+          gradient="from-cyan-500/[0.15]"
+          className="left-[20%] md:left-[25%] top-[5%] md:top-[10%]"
+        />
       </div>
 
-      {/* Heading */}
-      <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-center text-slate-900 dark:text-white leading-tight max-w-3xl">
-        Manage Class{" "}
-        <span className="text-indigo-600 dark:text-indigo-400">Presentations</span>{" "}
-        Smarter
-      </h1>
-
-      {/* Subtext */}
-      <p className="mt-6 text-lg text-slate-500 dark:text-slate-400 text-center max-w-xl leading-relaxed">
-        No more WhatsApp chaos or Google Sheets. One clean system for students
-        to join groups, submit slides, and teachers to run presentations live.
-      </p>
-
-      {/* CTA Buttons */}
-      <div className="mt-8 flex flex-col sm:flex-row gap-3">
-        <a
-          href="#search"
-          className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-colors text-center"
-        >
-          Enter Section
-        </a>
-        <Link
-          href="/teacher/login"
-          className="px-6 py-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors text-center"
-        >
-          Teacher Login
-        </Link>
-      </div>
-
-      {/* Search Box */}
-      <div id="search" className="mt-14 w-full max-w-lg">
-        <SectionSearch large />
-      </div>
-
-      {/* Preview cards row */}
-      <div className="mt-16 w-full max-w-4xl grid grid-cols-3 gap-4 opacity-60">
-        {["Group 1", "Group 2", "Group 3"].map((g, i) => (
-          <div
-            key={g}
-            className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4"
+      <div className="relative z-10 container mx-auto px-4 md:px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div
+            custom={0}
+            variants={fadeUpVariants}
+            initial="hidden"
+            animate="visible"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] mb-8 md:mb-12"
           >
-            <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 mb-3"></div>
-            <div className="h-3 w-3/4 rounded bg-slate-100 dark:bg-slate-800 mb-2"></div>
-            <div className="h-3 w-1/2 rounded bg-slate-100 dark:bg-slate-800 mb-4"></div>
-            <div
-              className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
-                i === 0
-                  ? "bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-400"
-                  : i === 1
-                  ? "bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400"
-                  : "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400"
-              }`}
-            >
-              {i === 0 ? "Submitted" : i === 1 ? "Full" : "Open"}
+            <Circle className="h-2 w-2 fill-rose-500/80" />
+            <span className="text-sm text-white/60 tracking-wide">{badge}</span>
+          </motion.div>
+
+          <motion.div
+            custom={1}
+            variants={fadeUpVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold mb-6 md:mb-8 tracking-tight">
+              <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/80">
+                {title1}
+              </span>
+              <br />
+              <span
+                className={cn(
+                  "bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-white/90 to-rose-300",
+                )}
+              >
+                {title2}
+              </span>
+            </h1>
+          </motion.div>
+
+          <motion.div
+            custom={2}
+            variants={fadeUpVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <div className="space-y-2 flex justify-center text-center mx-auto ">
+              <div className="relative" >
+                <Input
+                  id={inputId}
+                  aria-label="Search section code"
+                  className="peer pe-15 py-5  ps-15 max-w-[500px] rounded-4xl"
+                  placeholder="Enter your section code"
+                  type="search"
+                />
+                <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
+                  <Search size={16} strokeWidth={2} />
+                </div>
+                <button
+                  className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-lg text-muted-foreground/80  transition-colors "
+                  aria-label="Submit search"
+                  type="button"
+                >
+                  <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          </motion.div>
+        </div>
       </div>
-    </section>
+
+      <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-[#030303]/80 pointer-events-none" />
+    </div>
   );
 }

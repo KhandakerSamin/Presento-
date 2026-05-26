@@ -1,102 +1,95 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Grid2x2PlusIcon, MenuIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { HoverButton } from "@/components/ui/HoverButton";
 
 export default function Navbar() {
-  const [searchCode, setSearchCode] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const router = useRouter();
+  const [open, setOpen] = React.useState(false);
 
-  function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    const code = searchCode.trim().toUpperCase();
-    if (code) {
-      router.push(`/section/${code}`);
-    }
-  }
+  const links = [
+    {
+      label: "Features",
+      href: "#features",
+    },
+    {
+      label: "How It Works",
+      href: "#how-it-works",
+    },
+    {
+      label: "About",
+      href: "#about",
+    },
+  ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-        {/* Logo */}
+    <header className="fixed top-5 left-0 right-0 z-50 px-3">
+      <div
+        className={cn(
+          "mx-auto w-full max-w-3xl rounded-lg border shadow",
+          "bg-white/80 dark:bg-slate-950/60 supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/50 backdrop-blur-lg",
+          "border-slate-200/70 dark:border-slate-800"
+        )}
+      >
+      <nav className="mx-auto flex items-center justify-between p-1.5">
         <Link
           href="/"
-          className="flex items-center gap-2 font-bold text-xl text-slate-900 dark:text-white shrink-0"
+          className="hover:bg-accent flex items-center gap-2 rounded-md px-2 py-1 duration-100"
         >
-          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white text-sm font-bold">
-            P
-          </div>
-          Presento
+          <Grid2x2PlusIcon className="size-5" />
+          <p className="font-mono text-base font-bold">Presento</p>
         </Link>
 
-        {/* Search bar */}
-        <form
-          onSubmit={handleSearch}
-          className="hidden md:flex items-center justify-end gap-2 flex-1"
-        >
-          <input
-            type="text"
-            value={searchCode}
-            onChange={(e) => setSearchCode(e.target.value)}
-            placeholder="Enter section code..."
-            className="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-          />
+        <div className="hidden items-center gap-1 lg:flex">
+          {links.map((link) => (
+            <a
+              key={link.label}
+              className="px-3 py-1.5 text-sm rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
+              href={link.href}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Link href="/teacher/login">
+            <HoverButton className="h-11 px-6 text-sm">Get Started</HoverButton>
+          </Link>
+
           <button
-            type="submit"
-            className="px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors shrink-0"
+            type="button"
+            onClick={() => setOpen(!open)}
+            className="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
+            aria-label="Toggle menu"
           >
-            Go
+            <MenuIcon className="size-4" />
           </button>
-        </form>
-
-        {/* Teacher Login */}
-        <Link
-          href="/teacher/login"
-          className="hidden md:block px-4 py-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors"
-        >
-          Teacher Login
-        </Link>
-
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden p-2 text-slate-600 dark:text-slate-400"
-        >
-          <div className="w-5 h-0.5 bg-current mb-1"></div>
-          <div className="w-5 h-0.5 bg-current mb-1"></div>
-          <div className="w-5 h-0.5 bg-current"></div>
-        </button>
+        </div>
       </nav>
 
-      {/* Mobile dropdown */}
-      {menuOpen && (
-        <div className="md:hidden px-4 pb-4 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 flex flex-col gap-3">
-          <form onSubmit={handleSearch} className="flex gap-2">
-            <input
-              type="text"
-              value={searchCode}
-              onChange={(e) => setSearchCode(e.target.value)}
-              placeholder="Enter section code..."
-              className="flex-1 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-            <button
-              type="submit"
-              className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg"
-            >
-              Go
-            </button>
-          </form>
-          <Link
-            href="/teacher/login"
-            className="text-sm font-medium text-indigo-600 dark:text-indigo-400"
-            onClick={() => setMenuOpen(false)}
-          >
-            Teacher Login →
-          </Link>
+      {open && (
+        <div className="lg:hidden border-t border-slate-200/70 dark:border-slate-800 px-3 pb-3">
+          <div className="grid gap-2 pt-3">
+            {links.map((link) => (
+              <a
+                key={link.label}
+                className="px-3 py-2 text-sm rounded-md text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
+                href={link.href}
+                onClick={() => setOpen(false)}
+              >
+                {link.label}
+              </a>
+            ))}
+            <Link href="/teacher/login" className="mt-2" onClick={() => setOpen(false)}>
+              <HoverButton className="w-full h-11 text-sm">Get Started</HoverButton>
+            </Link>
+          </div>
         </div>
       )}
+      </div>
     </header>
   );
 }
