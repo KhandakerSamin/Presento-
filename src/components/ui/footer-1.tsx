@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Grid2x2PlusIcon, Send, Share2, Users } from "lucide-react";
 
-export default function Footer() {
+export default function FooterOne() {
   return (
     <footer className="w-full bg-gradient-to-b from-[#030303] via-[#0c0a16] to-[#1a0f2e] text-white/80">
       <div className="mx-auto flex max-w-7xl flex-col items-center px-6 py-16">
@@ -39,7 +39,7 @@ export default function Footer() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-7xl px-6 py-6 text-center text-sm text-white/60">
-          <Link href="/">Presento</Link> ©{new Date().getFullYear()}. All rights reserved.
+          <Link href="/">Presento</Link> ©2025. All rights reserved.
         </div>
       </div>
     </footer>
