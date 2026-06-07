@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, type Transition } from "framer-motion";
 import { Lock, Mail, User } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ interface AuthSplitPanelProps {
   initialMode?: AuthMode;
 }
 
-const panelTransition = {
+const panelTransition: Transition = {
   type: "spring",
   stiffness: 140,
   damping: 20,

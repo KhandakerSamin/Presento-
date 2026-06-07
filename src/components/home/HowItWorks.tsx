@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 const steps = [
   {
     step: "01",
@@ -47,49 +51,66 @@ export default function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="py-24 px-4 bg-slate-50 dark:bg-slate-950"
+      className="py-24 px-4 bg-[#030303] relative border-t border-white/[0.05]"
     >
-      <div className="max-w-5xl mx-auto">
-        {/* Heading */}
-        <div className="text-center mb-16">
-          <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-3">
+      <div className="absolute inset-0 bg-gradient-to-t from-transparent to-rose-500/[0.02] pointer-events-none" />
+
+      <div className="max-w-5xl mx-auto relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.5, ease: [0.25, 0.4, 0.25, 1] as const }}
+          className="text-center mb-16"
+        >
+          <p className="text-sm font-medium text-rose-400/80 uppercase tracking-wider mb-3">
             How it works
           </p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">
+          <h2 className="text-3xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-white to-white/70">
             From setup to marksheet in 6 steps
           </h2>
-        </div>
+        </motion.div>
 
-        {/* Steps */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {steps.map((s) => (
-            <div
+          {steps.map((s, index) => (
+            <motion.div
               key={s.step}
-              className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{
+                duration: 0.5,
+                delay: index * 0.1,
+                ease: [0.25, 0.4, 0.25, 1] as const,
+              }}
+              className="p-6 rounded-3xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] transition-colors relative overflow-hidden group"
             >
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-3xl font-bold text-slate-100 dark:text-slate-800">
+              <div className="absolute top-0 right-0 p-6 pointer-events-none">
+                <span className="text-6xl font-bold text-white/[0.03] group-hover:text-white/[0.05] transition-colors">
                   {s.step}
                 </span>
+              </div>
+              
+              <div className="flex items-center justify-between mb-8 relative z-10">
                 <span
-                  className={`text-xs font-medium px-2 py-1 rounded-full ${
+                  className={`text-xs font-semibold px-3 py-1 rounded-full border ${
                     s.who === "Teacher"
-                      ? "bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400"
+                      ? "bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
                       : s.who === "CR"
-                      ? "bg-purple-50 dark:bg-purple-950 text-purple-600 dark:text-purple-400"
-                      : "bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400"
+                      ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                      : "bg-amber-500/10 text-amber-400 border-amber-500/20"
                   }`}
                 >
                   {s.who}
                 </span>
               </div>
-              <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+              <h3 className="text-xl font-semibold text-white/90 mb-3 relative z-10">
                 {s.title}
               </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+              <p className="text-sm text-white/50 leading-relaxed relative z-10">
                 {s.description}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
