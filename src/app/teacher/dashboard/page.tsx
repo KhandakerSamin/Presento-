@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getTeacherUser } from "@/lib/auth/teacher-auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { BookOpen, Plus } from "lucide-react";
@@ -8,42 +9,48 @@ import SectionList from "@/components/teacher/SectionList";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getTeacherUser();
 
   if (!user) redirect("/teacher/login");
 
-  // Fetch this teacher's sections (not archived)
-  const { data: sections } = await supabase
-    .from("sections")
-    .select("*, course:courses(course_code, course_name, department:departments(code))")
-    .eq("teacher_id", user.id)
-    .eq("is_archived", false)
-    .order("created_at", { ascending: false });
-
-  const sectionIds = (sections || []).map((section) => section.id);
+  let sections: any[] = [];
   let pendingTopicCounts: Record<string, number> = {};
 
-  if (sectionIds.length > 0) {
-    const { data: pendingTopics } = await supabase
-      .from("groups")
-      .select("section_id")
-      .in("section_id", sectionIds)
-      .eq("topic_status", "pending");
+  try {
+    const supabase = await createClient();
 
-    pendingTopicCounts = (pendingTopics || []).reduce((acc, group) => {
-      acc[group.section_id] = (acc[group.section_id] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    // Fetch this teacher's sections (not archived)
+    const { data: dbSections } = await supabase
+      .from("sections")
+      .select("*, course:courses(course_code, course_name, department:departments(code))")
+      .eq("teacher_id", user.id)
+      .eq("is_archived", false)
+      .order("created_at", { ascending: false });
+
+    sections = dbSections || [];
+
+    const sectionIds = sections.map((section) => section.id);
+
+    if (sectionIds.length > 0) {
+      const { data: pendingTopics } = await supabase
+        .from("groups")
+        .select("section_id")
+        .in("section_id", sectionIds)
+        .eq("topic_status", "pending");
+
+      pendingTopicCounts = (pendingTopics || []).reduce((acc, group) => {
+        acc[group.section_id] = (acc[group.section_id] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+    }
+  } catch {
+    // Database connection error handling
+    sections = [];
   }
 
   return (
     <TeacherLayout>
       <div className="p-6 md:p-8 max-w-6xl mx-auto">
-        
         {/* Header */}
         <div className="mb-10">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
@@ -100,7 +107,6 @@ export default async function DashboardPage() {
             </div>
           )}
         </section>
-
       </div>
     </TeacherLayout>
   );

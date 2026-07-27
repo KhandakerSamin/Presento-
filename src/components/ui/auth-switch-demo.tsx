@@ -1,17 +1,155 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { CheckCircle2, Send, Share2, Users } from "lucide-react";
+import React, { FormEvent, useEffect, useState } from "react";
+import { AlertCircle, CheckCircle2, Eye, EyeOff, Send, Share2, Users } from "lucide-react";
 
-export default function AuthSwitch() {
-  const [isSignUp, setIsSignUp] = useState(false);
+type AuthSwitchProps = {
+  initialMode?: "login" | "signup";
+};
+
+export default function AuthSwitch({ initialMode = "login" }: AuthSwitchProps) {
+  const [isSignUp, setIsSignUp] = useState(initialMode === "signup");
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [signupName, setSignupName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+
+  const [loading, setLoading] = useState<"login" | "signup" | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check URL parameters for feedback messages (e.g., from auth callback)
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const urlError = params.get("error");
+      const urlMessage = params.get("message");
+
+      if (urlError) {
+        setErrorMessage(decodeURIComponent(urlError));
+      } else if (urlMessage) {
+        setSuccessMessage(decodeURIComponent(urlMessage));
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const container = document.querySelector(".auth-switch-container");
     if (!container) return;
     if (isSignUp) container.classList.add("sign-up-mode");
     else container.classList.remove("sign-up-mode");
+
+    // Clear alert states on mode change
+    setErrorMessage(null);
+    setSuccessMessage(null);
   }, [isSignUp]);
+
+  async function handleLogin(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    const email = loginEmail.trim();
+    if (!email || !loginPassword) {
+      setErrorMessage("Please enter both email and password.");
+      return;
+    }
+
+    setLoading("login");
+
+    try {
+      const response = await fetch("/api/teacher-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "login",
+          email,
+          password: loginPassword,
+        }),
+      });
+
+      const payload = (await response.json().catch(() => null)) as {
+        ok?: boolean;
+        error?: string;
+      } | null;
+
+      if (!response.ok || !payload?.ok) {
+        setErrorMessage(payload?.error ?? "Unable to sign in. Please check your credentials.");
+        return;
+      }
+
+      window.location.replace("/teacher/dashboard");
+    } catch {
+      setErrorMessage("Network error: Teacher auth request failed. Please check your connection.");
+    } finally {
+      setLoading(null);
+    }
+  }
+
+  async function handleSignup(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    const email = signupEmail.trim();
+    const name = signupName.trim();
+
+    if (!email || !signupPassword) {
+      setErrorMessage("Email and password are required.");
+      return;
+    }
+
+    if (signupPassword.length < 6) {
+      setErrorMessage("Password must be at least 6 characters long.");
+      return;
+    }
+
+    setLoading("signup");
+
+    try {
+      const response = await fetch("/api/teacher-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "signup",
+          email,
+          password: signupPassword,
+          name,
+        }),
+      });
+
+      const payload = (await response.json().catch(() => null)) as {
+        ok?: boolean;
+        error?: string;
+        authenticated?: boolean;
+        message?: string;
+      } | null;
+
+      if (!response.ok || !payload?.ok) {
+        setErrorMessage(payload?.error ?? "Unable to create account.");
+        return;
+      }
+
+      if (payload.authenticated) {
+        window.location.replace("/teacher/dashboard");
+        return;
+      }
+
+      setSuccessMessage(
+        payload.message ??
+          "Account created successfully! Please check your email to confirm your account."
+      );
+      setIsSignUp(false);
+      setLoginEmail(email);
+    } catch {
+      setErrorMessage("Network error: Teacher auth request failed. Please check your connection.");
+    } finally {
+      setLoading(null);
+    }
+  }
 
   return (
     <>
@@ -29,7 +167,7 @@ export default function AuthSwitch() {
           position: relative;
           width: 100%;
           max-width: 900px;
-          height: 550px;
+          min-height: 580px;
           background: white;
           border-radius: 20px;
           box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
@@ -61,7 +199,7 @@ export default function AuthSwitch() {
           align-items: center;
           justify-content: center;
           flex-direction: column;
-          padding: 0 5rem;
+          padding: 0 3.5rem;
           transition: all 0.2s 0.7s;
           overflow: hidden;
           grid-column: 1 / 2;
@@ -84,18 +222,44 @@ export default function AuthSwitch() {
           font-weight: 700;
         }
 
+        .alert-box {
+          max-width: 380px;
+          width: 100%;
+          padding: 10px 14px;
+          border-radius: 10px;
+          font-size: 0.85rem;
+          margin-bottom: 12px;
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+          box-sizing: border-box;
+        }
+
+        .alert-box.error {
+          background-color: #fef2f2;
+          border: 1px solid #fecaca;
+          color: #b91c1c;
+        }
+
+        .alert-box.success {
+          background-color: #f0fdf4;
+          border: 1px solid #bbf7d0;
+          color: #15803d;
+        }
+
         .input-field {
           max-width: 380px;
           width: 100%;
           background-color: #f0f0f0;
-          margin: 10px 0;
-          height: 55px;
-          border-radius: 55px;
-          display: grid;
-          grid-template-columns: 15% 85%;
-          padding: 0 0.4rem;
+          margin: 8px 0;
+          height: 52px;
+          border-radius: 52px;
+          display: flex;
+          align-items: center;
+          padding: 0 0.8rem;
           position: relative;
           transition: 0.3s;
+          box-sizing: border-box;
         }
 
         .input-field:focus-within {
@@ -104,14 +268,12 @@ export default function AuthSwitch() {
         }
 
         .input-field i {
-          text-align: center;
-          line-height: 55px;
           color: #666;
-          transition: 0.5s;
-          font-size: 1.1rem;
           display: flex;
           align-items: center;
           justify-content: center;
+          margin-right: 10px;
+          flex-shrink: 0;
         }
 
         .input-field input {
@@ -120,7 +282,7 @@ export default function AuthSwitch() {
           border: none;
           line-height: 1;
           font-weight: 500;
-          font-size: 1rem;
+          font-size: 0.95rem;
           color: #333;
           width: 100%;
         }
@@ -130,20 +292,35 @@ export default function AuthSwitch() {
           font-weight: 400;
         }
 
+        .toggle-password-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #666;
+          padding: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .toggle-password-btn:hover {
+          color: #333;
+        }
+
         .btn {
           width: 150px;
           background-color: #667eea;
           border: none;
           outline: none;
-          height: 49px;
-          border-radius: 49px;
+          height: 46px;
+          border-radius: 46px;
           color: #fff;
           text-transform: uppercase;
           font-weight: 600;
-          margin: 10px 0;
+          margin: 12px 0;
           cursor: pointer;
           transition: 0.5s;
-          font-size: 0.9rem;
+          font-size: 0.85rem;
         }
 
         .btn:hover {
@@ -268,35 +445,43 @@ export default function AuthSwitch() {
         }
 
         .social-text {
-          padding: 0.7rem 0;
-          font-size: 1rem;
+          padding: 0.5rem 0;
+          font-size: 0.9rem;
           color: #666;
         }
 
         .social-media {
           display: flex;
           justify-content: center;
-          gap: 15px;
+          gap: 12px;
         }
 
         .social-icon {
-          height: 46px;
-          width: 46px;
+          height: 42px;
+          width: 42px;
           display: flex;
           justify-content: center;
           align-items: center;
           border: 1px solid #ddd;
           border-radius: 50%;
           color: #667eea;
-          font-size: 1.2rem;
+          font-size: 1.1rem;
           transition: 0.3s;
           cursor: pointer;
+          background: #fff;
         }
 
         .social-icon:hover {
           border-color: #764ba2;
           transform: translateY(-3px);
           box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:disabled {
+          cursor: not-allowed;
+          opacity: 0.7;
+          transform: none;
+          box-shadow: none;
         }
 
         @media (max-width: 870px) {
@@ -392,38 +577,140 @@ export default function AuthSwitch() {
         <div className="auth-switch-container">
           <div className="auth-switch-forms">
             <div className="signin-signup">
-              <form className="auth-form sign-in-form">
+              {/* Sign In Form */}
+              <form className="auth-form sign-in-form" onSubmit={handleLogin}>
                 <h2 className="title">Sign in</h2>
+
+                {errorMessage && !isSignUp && (
+                  <div className="alert-box error" role="alert">
+                    <AlertCircle size={18} style={{ flexShrink: 0, marginTop: 1 }} />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
+                {successMessage && !isSignUp && (
+                  <div className="alert-box success" role="status">
+                    <CheckCircle2 size={18} style={{ flexShrink: 0, marginTop: 1 }} />
+                    <span>{successMessage}</span>
+                  </div>
+                )}
+
                 <div className="input-field">
-                  <i>📧</i>
-                  <input type="email" placeholder="Email" />
+                  <i>
+                    <Users size={17} />
+                  </i>
+                  <input
+                    type="email"
+                    placeholder="Email address"
+                    value={loginEmail}
+                    onChange={(event) => setLoginEmail(event.target.value)}
+                    autoComplete="email"
+                    required
+                  />
                 </div>
+
                 <div className="input-field">
-                  <i>🔒</i>
-                  <input type="password" placeholder="Password" />
+                  <i>
+                    <CheckCircle2 size={17} />
+                  </i>
+                  <input
+                    type={showLoginPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={loginPassword}
+                    onChange={(event) => setLoginPassword(event.target.value)}
+                    autoComplete="current-password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password-btn"
+                    onClick={() => setShowLoginPassword((prev) => !prev)}
+                    aria-label={showLoginPassword ? "Hide password" : "Show password"}
+                  >
+                    {showLoginPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
-                <input type="submit" value="Login" className="btn solid" />
+
+                <input
+                  type="submit"
+                  value={loading === "login" ? "Logging in..." : "Login"}
+                  className="btn solid"
+                  disabled={loading !== null}
+                />
                 <p className="social-text">Or sign in with social platforms</p>
                 <div className="social-media">
                   <SocialIcons />
                 </div>
               </form>
 
-              <form className="auth-form sign-up-form">
+              {/* Sign Up Form */}
+              <form className="auth-form sign-up-form" onSubmit={handleSignup}>
                 <h2 className="title">Sign up</h2>
+
+                {errorMessage && isSignUp && (
+                  <div className="alert-box error" role="alert">
+                    <AlertCircle size={18} style={{ flexShrink: 0, marginTop: 1 }} />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
                 <div className="input-field">
-                  <i>👤</i>
-                  <input type="text" placeholder="Username" />
+                  <i>
+                    <Users size={17} />
+                  </i>
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    value={signupName}
+                    onChange={(event) => setSignupName(event.target.value)}
+                    autoComplete="name"
+                    required
+                  />
                 </div>
+
                 <div className="input-field">
-                  <i>📧</i>
-                  <input type="email" placeholder="Email" />
+                  <i>
+                    <Share2 size={17} />
+                  </i>
+                  <input
+                    type="email"
+                    placeholder="Email address"
+                    value={signupEmail}
+                    onChange={(event) => setSignupEmail(event.target.value)}
+                    autoComplete="email"
+                    required
+                  />
                 </div>
+
                 <div className="input-field">
-                  <i>🔒</i>
-                  <input type="password" placeholder="Password" />
+                  <i>
+                    <Send size={17} />
+                  </i>
+                  <input
+                    type={showSignupPassword ? "text" : "password"}
+                    placeholder="Password (min. 6 characters)"
+                    value={signupPassword}
+                    onChange={(event) => setSignupPassword(event.target.value)}
+                    autoComplete="new-password"
+                    minLength={6}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password-btn"
+                    onClick={() => setShowSignupPassword((prev) => !prev)}
+                    aria-label={showSignupPassword ? "Hide password" : "Show password"}
+                  >
+                    {showSignupPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
                 </div>
-                <input type="submit" value="Sign up" className="btn" />
+
+                <input
+                  type="submit"
+                  value={loading === "signup" ? "Signing up..." : "Sign up"}
+                  className="btn"
+                  disabled={loading !== null}
+                />
                 <p className="social-text">Or sign up with social platforms</p>
                 <div className="social-media">
                   <SocialIcons />
@@ -436,11 +723,8 @@ export default function AuthSwitch() {
             <div className="panel left-panel">
               <div className="content">
                 <h3>New here?</h3>
-                <p>
-                  Join us today and discover a world of possibilities. Create
-                  your account in seconds!
-                </p>
-                <button className="btn transparent" onClick={() => setIsSignUp(true)}>
+                <p>Join us today and discover a world of possibilities. Create your account in seconds!</p>
+                <button type="button" className="btn transparent" onClick={() => setIsSignUp(true)}>
                   Sign up
                 </button>
               </div>
@@ -450,7 +734,7 @@ export default function AuthSwitch() {
               <div className="content">
                 <h3>One of us?</h3>
                 <p>Welcome back! Sign in to continue your journey with us.</p>
-                <button className="btn transparent" onClick={() => setIsSignUp(false)}>
+                <button type="button" className="btn transparent" onClick={() => setIsSignUp(false)}>
                   Sign in
                 </button>
               </div>
@@ -466,16 +750,16 @@ function SocialIcons() {
   return (
     <>
       <button type="button" className="social-icon" aria-label="Community">
-        <Users size={20} />
+        <Users size={18} />
       </button>
       <button type="button" className="social-icon" aria-label="Share">
-        <Share2 size={20} />
+        <Share2 size={18} />
       </button>
       <button type="button" className="social-icon" aria-label="Send">
-        <Send size={20} />
+        <Send size={18} />
       </button>
       <button type="button" className="social-icon" aria-label="Verified">
-        <CheckCircle2 size={20} />
+        <CheckCircle2 size={18} />
       </button>
     </>
   );

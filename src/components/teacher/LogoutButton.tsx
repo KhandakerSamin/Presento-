@@ -1,16 +1,15 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-
 export default function LogoutButton() {
-  const router = useRouter();
-
   async function handleLogout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/teacher/login");
-    router.refresh();
+    await fetch("/api/teacher-auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ action: "logout" }),
+    });
+    window.location.replace("/teacher/login");
   }
 
   return (
